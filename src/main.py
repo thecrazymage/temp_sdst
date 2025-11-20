@@ -24,10 +24,10 @@ def parse_args():
     
     # ========== Input Data ==========
     data_group = parser.add_argument_group('Input Data')
-    data_group.add_argument('--prompt',           type=str, required=True,            help='Text prompt describing desired texture')
-    data_group.add_argument('--mesh_location',    type=str, default='data/spot.obj',  help='Path to input mesh file (.obj format)')
-    data_group.add_argument('--dir_embeddings',   action='store_true',                help='Use view-dependent text embeddings')
-    data_group.add_argument('--prompt_cache_dir', type=str, default='cached_prompts', help='Directory for caching encoded prompts')
+    data_group.add_argument('--prompt',             type=str, required=True,            help='Text prompt describing desired texture')
+    data_group.add_argument('--mesh_location',      type=str, default='data/spot.obj',  help='Path to input mesh file (.obj format)')
+    data_group.add_argument('--use_dir_embeddings', action='store_true',                help='Use view-dependent text embeddings')
+    data_group.add_argument('--prompt_cache_dir',   type=str, default='cached_prompts', help='Directory for caching encoded prompts')
     
     # ========== Diffusion Model ==========
     model_group = parser.add_argument_group('Diffusion Model')
@@ -83,7 +83,7 @@ def main():
     print("Encoding prompt embeddings...")
     prompt_embeddings = encode_prompt(
         prompt, 
-        directional=args.use_directional_embeddings
+        directional=args.use_dir_embeddings
     )
     
     print("Initializing textures...")    
@@ -93,7 +93,7 @@ def main():
     mesh = load_mesh(args.mesh_location, texture)
     
     phase1_time = 0.0
-    if args.n_steps_i > 0:
+    if args.num_steps_i > 0:
         print(f"\n{'='*60}")
         print("Starting Stage i ...")
         print(f"{'='*60}")
@@ -109,7 +109,7 @@ def main():
         phase1_time = time.time() - start_stage1
     
     phase2_time = 0.0
-    if args.n_steps_2 > 0:
+    if args.num_steps_ii > 0:
         print(f"\n{'='*60}")
         print("Starting Stage ii ...")
         print(f"{'='*60}")

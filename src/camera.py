@@ -30,7 +30,7 @@ class CameraExtrinsics:
     def __init__(self, eye, at, up):
         self.num_cameras = len(eye)
         if eye.ndim == 1:
-            eye = eye.unsqeueeze(0)
+            eye = eye.unsqueeze(0)
         if at.ndim == 1:
             at = at.unsqueeze(0)
         if up.ndim == 1:
