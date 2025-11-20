@@ -37,8 +37,8 @@ def parse_args():
     
     # ========== Training Configuration ==========
     train_group = parser.add_argument_group('Training Configuration')
-    train_group.add_argument('--num_steps_i',        type=int,   default=1000, help='Number of optimization steps for stage I')
-    train_group.add_argument('--num_steps_ii',       type=int,   default=500,  help='Number of optimization steps for stage II')
+    train_group.add_argument('--num_steps_i',        type=int,   default=500,  help='Number of optimization steps for stage I')
+    train_group.add_argument('--num_steps_ii',       type=int,   default=1000, help='Number of optimization steps for stage II')
     train_group.add_argument('--batch_size',         type=int,   default=8,    help='Number of views to render per training iteration')
     train_group.add_argument('--guidance_scale_i',   type=float, default=15.0, help='Classifier-free guidance scale for stage I')
     train_group.add_argument('--guidance_scale_ii',  type=float, default=10.0, help='Classifier-free guidance scale for stage II')
