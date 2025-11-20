@@ -1,37 +1,28 @@
-import numpy as np
 import torch
-#import kaolin as kal
+import numpy as np
 from torch.nn.functional import normalize
 
 def generate_point_on_a_sphere(shape):
-    # generate camera
+    """Generate camera"""
     theta = torch.pi / 3 * (2. * torch.rand(*shape) - 1.)
     phi = 2 * torch.pi * torch.rand(*shape)
     return torch.stack([
         phi.cos() * theta.cos(),
         theta.sin(),
         phi.sin() * theta.cos()
-    ], -1), theta, phi # mishan: adding pos encodings
+    ], -1), theta, phi
 
-def get_camera(batch_size, target, r, eye=None):
+def get_camera(batch_size, target, r, eye=None, device='cuda:0'):
     if eye is None:
-        # mishan: adding pos encodings
         eye, theta, phi = generate_point_on_a_sphere([batch_size,])
         eye = r * eye
     else:
         theta, phi = None, None
-    #return kal.render.camera.Camera.from_args(
-    #    eye=eye,
-    #    at=target,
-    #    up=torch.tensor([0.0, 1.0, 0.0]),
-    #    fov=30 * torch.pi / 180,  # In radians
-    #    width=512, height=512,
-    #    dtype=torch.float32,
-    #).cuda()
-    eye = eye.cuda()
-    target = target.cuda()
-    up = torch.tensor([0.0, 1.0, 0.0], device='cuda:0')
-    fov = torch.full_like(eye[..., 0], 30 * torch.pi / 180)
+
+    eye = eye.to(device)
+    target = target.to(device)
+    up = torch.tensor([0.0, 1.0, 0.0], device=device)
+    fov = torch.full_like(eye[..., 0], 30 * torch.pi / 180, device=device)
     
     return Camera(eye=eye, at=target, up=up, fov=fov, width=512, height=512), theta, phi
 

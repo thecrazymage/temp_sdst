@@ -1,41 +1,25 @@
-import xatlas
-import torch
-# import kaolin as kal
-from our_kaolin import import_mesh, center_points, PBRMaterial, SurfaceMesh
-import copy
-import numpy as np
 import os
 import cv2
+import copy
+import torch
+import xatlas
+import numpy as np
+from our_kaolin import import_mesh, center_points, PBRMaterial, SurfaceMesh
 
 def load_mesh(filename, pbr_material_parameters, use_predefined_texture=False, device="cuda:0"):
-    # import model with a uv map
-    _, file_extension = os.path.splitext(filename)
-    if file_extension == '.obj':
-        # mesh = kal.io.obj.import_mesh(filename, with_materials=use_predefined_texture)
-        mesh = import_mesh(filename, with_materials=use_predefined_texture)
-    # elif file_extension == '.glb' or file_extension == '.gltf':
-    #     mesh = kal.io.gltf.import_mesh(filename)
-    else:
-        raise NotImplementedError
-    mesh = mesh.to(device=device)
-    # mesh.vertices = kal.ops.pointcloud.center_points(
+    # only for obj files
+    mesh = import_mesh(filename, with_materials=use_predefined_texture).to(device=device)
     mesh.vertices = 2 * center_points(
         mesh.vertices.unsqueeze(0), normalize=True
     ).squeeze(0)
     
-    if use_predefined_texture:
-        uvs = mesh.uvs
-        indices = mesh.face_uvs_idx
-    else:
-        # compute uv map
-        vmapping, indices, uvs = xatlas.parametrize(
-            mesh.vertices.cpu(),
-            mesh.faces.cpu(),
-        )
-        uvs = torch.tensor(uvs)
-        indices = torch.tensor(indices.astype(np.int64), dtype=torch.long)
+    vmapping, indices, uvs = xatlas.parametrize(
+        mesh.vertices.cpu(),
+        mesh.faces.cpu(),
+    )
+    uvs = torch.tensor(uvs, device=device)
+    indices = torch.tensor(indices, dtype=torch.long, device=device)
 
-    # my_material = kal.render.materials.PBRMaterial(
     my_material = PBRMaterial(
         **pbr_material_parameters,
         is_specular_workflow=False
@@ -44,41 +28,20 @@ def load_mesh(filename, pbr_material_parameters, use_predefined_texture=False, d
         np.fromfile("assets/bsdf_256_256.bin", dtype=np.float32).reshape(
             1, 256, 256, 2
         )
-    ).cuda()
+    ).to(device)
     my_material.FG_LUT = FG_LUT
 
-    # initialize a mesh from scratch
-    
-    # return kal.rep.SurfaceMesh(
     return SurfaceMesh(
         vertices=mesh.vertices,
         faces=mesh.faces,
-        uvs=uvs.cuda(),
-        face_uvs_idx=indices.cuda(),
+        uvs=uvs,
+        face_uvs_idx=indices,
         materials=[my_material,],
         allow_auto_compute=True
     )
 
-# mishan: update materials for mesh 
-def update_mesh(mesh, pbr_material_parameters, device="cuda:0"):
-    
-    my_material = PBRMaterial(
-        **pbr_material_parameters,
-        is_specular_workflow=False
-    )
-    FG_LUT = torch.from_numpy(
-        np.fromfile("assets/bsdf_256_256.bin", dtype=np.float32).reshape(
-            1, 256, 256, 2
-        )
-    ).cuda()
-    my_material.FG_LUT = FG_LUT
-
-    mesh.materials = [my_material,]
-    return mesh
-
 def copy_mesh(mesh, texture):
     texture_clone = {key: texture[key].detach().clone() for key in texture.keys()}
-    # my_material = kal.render.materials.PBRMaterial(
     my_material = PBRMaterial(
         **texture_clone,
         is_specular_workflow=False
@@ -119,7 +82,7 @@ def write_obj(folder, mesh, material):
             for v in v_nrm:
                 f.write('vn {} {} {}\n'.format(v[0], v[1], v[2]))
 
-        # faces
+        # Faces
         f.write("s 1 \n")
         f.write("g pMesh1\n")
         f.write("usemtl defaultMat\n")
