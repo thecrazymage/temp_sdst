@@ -38,7 +38,6 @@ class Trainer:
         self.use_dir_embeddings = config.use_dir_embeddings 
         
         self.batch_size = config.batch_size
-        self.objaverse_eval = config.objaverse_eval
         self.eval_plot_iter = config.eval_plot_iter
         self.experiment_path = config.experiment_path
         self.progress_dir = os.path.join(self.experiment_path, f'texture_progress_stage_{self.stage}')
