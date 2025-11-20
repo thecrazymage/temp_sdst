@@ -32,15 +32,17 @@ class Trainer:
         self.device = device
         self.mesh = mesh
         self.texture = texture
-        self.prompt_embeddings = prompt_embeddings
         self.renderer = renderer
         self.stage = stage
+        self.prompt_embeddings = prompt_embeddings
+        self.use_dir_embeddings = config.use_dir_embeddings 
         
         self.batch_size = config.batch_size
         self.objaverse_eval = config.objaverse_eval
         self.eval_plot_iter = config.eval_plot_iter
         self.experiment_path = config.experiment_path
-        self.use_dir_embeddings = config.use_dir_embeddings      
+        self.progress_dir = os.path.join(self.experiment_path, f'texture_progress_stage_{self.stage}')
+        os.makedirs(self.progress_dir, exist_ok=True)
 
         self.camera_target, self.r = self._get_camera_parameters()
         
@@ -218,7 +220,7 @@ class Trainer:
             ax.set_title(self.dir2name[val_dirs[i].item()])
             ax.axis('off')    
         render_path = os.path.join(
-            self.experiment_path,
+            self.progress_dir,
             f'render_stage_{self.stage}_step_{current_step}.png'
         )
         plt.savefig(render_path, bbox_inches='tight', dpi=300)
@@ -235,7 +237,7 @@ class Trainer:
             ax.axis('off')
             ax.set_title(key.replace('_texture', ''))
         texture_path = os.path.join(
-            self.experiment_path,
+            self.progress_dir, 
             f'texture_stage_{self.stage}_step_{current_step}.png'
         )
         plt.savefig(texture_path, bbox_inches='tight', dpi=300)
@@ -244,8 +246,8 @@ class Trainer:
     def make_video(self, current_step):
         """Generate 360 rotation video."""
         video_path = os.path.join(
-            self.experiment_path,
-            f"rotation_stage_{self.stage}_step_{current_step}.mp4"
+            self.progress_dir,
+            f"video_stage_{self.stage}_step_{current_step}.mp4"
         )
         
         writer = imageio.get_writer(video_path, fps=30)
