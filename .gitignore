@@ -1,4 +1,5 @@
 logs/
 data/objaverse/
+cached_prompts/
 __pycache__/
 draft/

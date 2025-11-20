@@ -8,10 +8,10 @@ import matplotlib.pyplot as plt
 import torch.nn.functional as F
 
 import envlight
-from guidance import SDSLoss
-from camera import get_camera
-from mesh import copy_mesh, write_obj
-from prompt_processing import get_view_direction
+from src.guidance import SDSLoss
+from src.camera import get_camera
+from src.mesh import copy_mesh, write_obj
+from src.prompt_processing import get_view_direction
 
 DEFAULT_T_MIN_START = 200
 DEFAULT_T_MIN_END = 300
@@ -40,7 +40,7 @@ class Trainer:
         self.objaverse_eval = config.objaverse_eval
         self.eval_plot_iter = config.eval_plot_iter
         self.experiment_path = config.experiment_path
-        self.use_directional_embeddings = config.use_directional_embeddings      
+        self.use_dir_embeddings = config.use_dir_embeddings      
 
         self.camera_target, self.r = self._get_camera_parameters()
         
@@ -110,19 +110,12 @@ class Trainer:
         self.val_phis = torch.linspace(0, 2 * torch.pi, eval_renders_count + 1)[:-1].view(1, -1)
         self.val_thetas = torch.zeros(1, eval_renders_count)
 
-        self.val_camera = []
-        for i in range(0, len(self.val_phis[0]), 10):
-            phi = self.val_phis[0][i:i + 10]
-            theta = self.val_thetas[0][i:i + 10]
-            
-            val_eye = self.r * torch.stack([
-                phi.cos() * theta.cos(),
-                torch.ones_like(phi) * theta.sin(),
-                phi.sin() * theta.cos()
-            ], dim=-1).view(-1, 3)
-            
-            temp_val_camera, _, _ = get_camera(len(val_eye), self.camera_target, self.r, val_eye, device=self.device)
-            self.val_camera.append(temp_val_camera)
+        val_eye = self.r * torch.stack([
+            self.val_phis.cos() * self.val_thetas.cos(),
+            torch.ones_like(self.val_phis) * self.val_thetas.sin(),
+            self.val_phis.sin() * self.val_thetas.cos()
+        ], dim=-1).view(-1, 3)        
+        self.val_camera, _, _ = get_camera(len(val_eye), self.camera_target, self.r, val_eye, device=self.device)
         
         self.video_camera, _, _ = get_camera(
             1, self.camera_target, self.r,
@@ -172,7 +165,7 @@ class Trainer:
         )
 
         view_dirs = get_view_direction(camera_thetas, camera_phis)
-        if self.use_directional_embeddings:
+        if self.use_dir_embeddings:
             view_dir_embeddings = self.prompt_embeddings[0][view_dirs]
             repeated_embeddings = self.prompt_embeddings[1][0].repeat(self.batch_size, 1, 1)
             batch_embeddings = [view_dir_embeddings, repeated_embeddings]
@@ -218,7 +211,7 @@ class Trainer:
 
         # Plot rendered views
         imgs = self.renderer.render(self.mesh, self.val_camera, self.light, val_background=True)   
-        fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(10, 10))
+        fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(5, 5))
         val_dirs = get_view_direction(self.val_thetas.squeeze(), self.val_phis.squeeze())        
         for i, ax in enumerate(axes.flat):
             ax.imshow(imgs[i].clamp(0., 1.).detach().cpu())
@@ -232,7 +225,7 @@ class Trainer:
         plt.close()
         
         # Plot texture maps
-        fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(10, 10))
+        fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(5, 5))
         texture_keys = ['diffuse_texture', 'normals_texture', 'metallic_texture', 'roughness_texture']
         for ax, key in zip(axes.flat, texture_keys):
             if key in self.texture.keys():
@@ -261,7 +254,7 @@ class Trainer:
         
         for theta in thetas:
             self._rotate_mesh(self.mesh, theta)
-            image = self.renderer.render(self.mesh, self.video_camera, self.val_light, val_background=True)
+            image = self.renderer.render(self.mesh, self.video_camera, self.light, val_background=True)
             self._rotate_mesh(self.mesh, -theta)
             
             image_cpu = image[0].clamp(0., 1.).detach().cpu()

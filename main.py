@@ -7,11 +7,11 @@ import random
 import argparse
 from datetime import datetime
 
-from train import Trainer
-from mesh import load_mesh
-from renderer import Renderer
-from prompt_processing import encode_prompt
-from utils import init_texture, seed_all, flush, save_texture
+from src.train import Trainer
+from src.mesh import load_mesh
+from src.renderer import Renderer
+from src.prompt_processing import encode_prompt
+from src.utils import init_texture, seed_all, flush, save_texture
 
 def parse_args():
     parser = argparse.ArgumentParser()

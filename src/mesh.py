@@ -4,11 +4,11 @@ import copy
 import torch
 import xatlas
 import numpy as np
-from our_kaolin import import_mesh, center_points, PBRMaterial, SurfaceMesh
+from src.our_kaolin import import_mesh, center_points, PBRMaterial, SurfaceMesh
 
 def load_mesh(filename, pbr_material_parameters, bsdf_path='assets/bsdf_256_256.bin', device="cuda:0"):
     # only for obj files
-    mesh = import_mesh(filename, with_materials=use_predefined_texture).to(device=device)
+    mesh = import_mesh(filename, with_materials=False).to(device=device)
     mesh.vertices = 2 * center_points(
         mesh.vertices.unsqueeze(0), normalize=True
     ).squeeze(0)

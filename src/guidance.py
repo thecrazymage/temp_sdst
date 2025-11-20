@@ -108,7 +108,7 @@ class SDSLoss(torch.nn.Module):
         self,
         images,
         condition_images=None,
-        prompt_embeddings,
+        prompt_embeddings=None,
         min_timestamp=200,
         max_timestamp=980,
         guidance_scale=15.0,
