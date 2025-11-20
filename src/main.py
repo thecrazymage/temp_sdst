@@ -9,6 +9,7 @@ from datetime import datetime
 
 from train import Trainer
 from mesh import load_mesh
+from renderer import Renderer
 from prompt_processing import encode_prompt
 from utils import init_texture, seed_all, flush, save_texture
 
@@ -91,6 +92,9 @@ def main():
     
     print("Loading mesh...")
     mesh = load_mesh(args.mesh_location, texture)
+
+    print("Loading renderer...")
+    renderer = Renderer()
     
     phase1_time = 0.0
     if args.num_steps_i > 0:
@@ -99,7 +103,7 @@ def main():
         print(f"{'='*60}")
         
         start_stage1 = time.time()
-        trainer = Trainer(mesh, texture, prompt_embeddings, 'i', args)
+        trainer = Trainer(mesh, texture, prompt_embeddings, renderer, 'i', args)
         trainer.run_training_loop()
         
         save_texture(experiment_path, texture, 'i')
@@ -115,7 +119,7 @@ def main():
         print(f"{'='*60}")
         
         start_stage2 = time.time()
-        trainer = Trainer(mesh, texture, prompt_embeddings, 'ii', args)
+        trainer = Trainer(mesh, texture, prompt_embeddings, renderer, 'ii', args)
         trainer.run_training_loop()
         
         save_texture(experiment_path, texture, 'ii')

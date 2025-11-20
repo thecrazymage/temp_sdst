@@ -1,6 +1,4 @@
 import torch
-import numpy as np
-from torch.nn.functional import normalize
 
 def generate_point_on_a_sphere(shape):
     """Generate camera"""
@@ -121,7 +119,7 @@ class CameraIntrinsics:
         return torch.cat([points, torch.ones_like(points[..., 0:1])], dim=-1)
 
     def project(self, points):
-        # points shape cab be ([num_cameras], num_points, 4), ([num_cameras], num_points, 3)
+        # points shape can be ([num_cameras], num_points, 4), ([num_cameras], num_points, 3)
         num_points = points.shape[-2]
         homogeneous_points = self.get_homogeneous_coordinates(points)
         homogeneous_points = homogeneous_points.expand(self.num_cameras, num_points, 4)[..., None]

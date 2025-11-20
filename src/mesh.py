@@ -6,7 +6,7 @@ import xatlas
 import numpy as np
 from our_kaolin import import_mesh, center_points, PBRMaterial, SurfaceMesh
 
-def load_mesh(filename, pbr_material_parameters, use_predefined_texture=False, device="cuda:0"):
+def load_mesh(filename, pbr_material_parameters, bsdf_path='assets/bsdf_256_256.bin', device="cuda:0"):
     # only for obj files
     mesh = import_mesh(filename, with_materials=use_predefined_texture).to(device=device)
     mesh.vertices = 2 * center_points(
@@ -25,9 +25,7 @@ def load_mesh(filename, pbr_material_parameters, use_predefined_texture=False, d
         is_specular_workflow=False
     )
     FG_LUT = torch.from_numpy(
-        np.fromfile("assets/bsdf_256_256.bin", dtype=np.float32).reshape(
-            1, 256, 256, 2
-        )
+        np.fromfile(bsdf_path, dtype=np.float32).reshape(1, 256, 256, 2)
     ).to(device)
     my_material.FG_LUT = FG_LUT
 

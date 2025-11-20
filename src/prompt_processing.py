@@ -38,7 +38,7 @@ def get_view_direction(thetas, phis):
 
     return res
 
-def encode_prompt(prompt, directional=True, deepfloyd_model='DeepFloyd/IF-I-XL-v1.0'):
+def encode_prompt(prompt, directional=True, deepfloyd_model='DeepFloyd/IF-I-XL-v1.0', cache_dir='cached_prompts'):
 
     cache_path = Path(cache_dir)
     cache_path.mkdir(exist_ok=True)
@@ -46,7 +46,6 @@ def encode_prompt(prompt, directional=True, deepfloyd_model='DeepFloyd/IF-I-XL-v
     embedding_path = cache_path / get_prompt_filename(prompt, directional)
     if embedding_path.exists():
         return torch.load(embedding_path)
-
 
     text_encoder = T5EncoderModel.from_pretrained(
         deepfloyd_model,
@@ -67,6 +66,6 @@ def encode_prompt(prompt, directional=True, deepfloyd_model='DeepFloyd/IF-I-XL-v
         prompts = [prompt]
 
     prompt_embeddings = pipe.encode_prompt(prompts)
-    torch.save(prompt_embeddings, embedding_filename)
+    torch.save(prompt_embeddings, embedding_path)
     
     return prompt_embeddings

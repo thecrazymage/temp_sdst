@@ -8,21 +8,23 @@ import matplotlib.pyplot as plt
 import torch.nn.functional as F
 
 import envlight
-from renderer import render
 from guidance import SDSLoss
 from camera import get_camera
-from torch.nn import ParameterDict
-from our_kaolin import rot33_rotate
 from mesh import copy_mesh, write_obj
 from prompt_processing import get_view_direction
 
+DEFAULT_T_MIN_START = 200
+DEFAULT_T_MIN_END = 300
+DEFAULT_T_MAX_START = 500
+DEFAULT_T_MAX_END = 980
 
 class Trainer:
     def __init__(
         self, 
         mesh, 
         texture, 
-        prompt_embeddings, 
+        prompt_embeddings,
+        renderer, 
         stage, 
         config,
         device='cuda:0'
@@ -31,6 +33,7 @@ class Trainer:
         self.mesh = mesh
         self.texture = texture
         self.prompt_embeddings = prompt_embeddings
+        self.renderer = renderer
         self.stage = stage
         
         self.batch_size = config.batch_size
@@ -160,8 +163,8 @@ class Trainer:
     def training_step(self, timestep):
 
         iter_frac = timestep / self.num_training_steps
-        t_min = self._compute_adaptive_timestep(200, 300, iter_frac)
-        t_max = self._compute_adaptive_timestep(500, 980, iter_frac)
+        t_min = self._compute_adaptive_timestep(DEFAULT_T_MIN_START, DEFAULT_T_MIN_END, iter_frac)
+        t_max = self._compute_adaptive_timestep(DEFAULT_T_MAX_START, DEFAULT_T_MAX_END, iter_frac)
 
         rand_scale = torch.rand(1) * (self.max_radius_scale - self.min_radius_scale) + self.min_radius_scale
         camera, camera_thetas, camera_phis = get_camera(
@@ -184,12 +187,12 @@ class Trainer:
         if self.stage == 'ii':
             with torch.no_grad():
                 self._rotate_mesh(self.original_mesh, rotate_theta)
-                condition_image = render(self.original_mesh, camera, self.light, random_background=True)
+                condition_image = self.renderer.render(self.original_mesh, camera, self.light, random_background=True)
                 condition_image = torch.movedim(condition_image, -1, 1)
                 self._rotate_mesh(self.original_mesh, -rotate_theta)
 
         self._rotate_mesh(self.mesh, rotate_theta)
-        image = render(self.mesh, camera, self.light, random_background=True)
+        image = self.renderer.render(self.mesh, camera, self.light, random_background=True)
         image = torch.movedim(image, -1, 1)
         self._rotate_mesh(self.mesh, -rotate_theta)
 
@@ -214,7 +217,7 @@ class Trainer:
         """Render validation views and save visualizations."""
 
         # Plot rendered views
-        imgs = render(self.mesh, self.val_camera, self.val_light, val_background=True)   
+        imgs = self.renderer.render(self.mesh, self.val_camera, self.light, val_background=True)   
         fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(10, 10))
         val_dirs = get_view_direction(self.val_thetas.squeeze(), self.val_phis.squeeze())        
         for i, ax in enumerate(axes.flat):
@@ -258,7 +261,7 @@ class Trainer:
         
         for theta in thetas:
             self._rotate_mesh(self.mesh, theta)
-            image = render(self.mesh, self.video_camera, self.val_light, val_background=True)
+            image = self.renderer.render(self.mesh, self.video_camera, self.val_light, val_background=True)
             self._rotate_mesh(self.mesh, -theta)
             
             image_cpu = image[0].clamp(0., 1.).detach().cpu()

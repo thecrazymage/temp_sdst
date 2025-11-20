@@ -1,85 +1,63 @@
 import torch
 import nvdiffrast
 import nvdiffrast.torch as dr
-from torch.nn.functional import normalize
 
-def interpolate_attributes(rast_out, rast_out_db, mesh):
-    normals = nvdiffrast.torch.interpolate(
-        mesh.get_or_compute_attribute('vertex_normals', should_cache=False),
-        rast_out,
-        mesh.faces.int(),
-        rast_db=rast_out_db,
-        diff_attrs='all',
-    )[0]
-    tangents = nvdiffrast.torch.interpolate(
-        mesh.get_or_compute_attribute('vertex_tangents', should_cache=False),
-        rast_out,
-        mesh.faces.int(),
-        rast_db=rast_out_db,
-        diff_attrs='all',
-    )[0]
-    bitangents = torch.nn.functional.normalize(torch.cross(tangents, normals, dim=-1), dim=-1)
-    # get uvs
-    texc, texd = nvdiffrast.torch.interpolate(
-        mesh.uvs,
-        rast_out,
-        mesh.face_uvs_idx.int(),
-        rast_db=rast_out_db,
-        diff_attrs='all',
-    )
-    return normals, tangents, bitangents, texc, texd
+class Renderer:
+    def __init__(self):
+        self.glctx = dr.RasterizeCudaContext()
+    
+    def _interpolate_attributes(self, rast_out, rast_out_db, mesh):
+        normals = nvdiffrast.torch.interpolate(
+            mesh.get_or_compute_attribute('vertex_normals', should_cache=False),
+            rast_out,
+            mesh.faces.int(),
+            rast_db=rast_out_db,
+            diff_attrs='all',
+        )[0]
+        tangents = nvdiffrast.torch.interpolate(
+            mesh.get_or_compute_attribute('vertex_tangents', should_cache=False),
+            rast_out,
+            mesh.faces.int(),
+            rast_db=rast_out_db,
+            diff_attrs='all',
+        )[0]
+        bitangents = torch.nn.functional.normalize(torch.cross(tangents, normals, dim=-1), dim=-1)
+        # get uvs
+        texc, texd = nvdiffrast.torch.interpolate(
+            mesh.uvs,
+            rast_out,
+            mesh.face_uvs_idx.int(),
+            rast_db=rast_out_db,
+            diff_attrs='all',
+        )
+        return normals, tangents, bitangents, texc, texd
 
-def get_ray_dirs(camera, device='cuda:0'):
-    num_cameras = len(camera)
-    pixel_y, pixel_x = torch.meshgrid(
-        torch.arange(camera.height, device=device),
-        torch.arange(camera.width, device=device),
-    )
-    pixel_x = pixel_x + 0.5
-    pixel_x = pixel_x.unsqueeze(0) - camera.x0.view(-1, 1, 1)
-    pixel_x = 2 * (pixel_x / camera.width) - 1.0
+    def _get_ray_dirs(self, camera, device='cuda:0'):
+        num_cameras = len(camera)
+        pixel_y, pixel_x = torch.meshgrid(
+            torch.arange(camera.height, device=device),
+            torch.arange(camera.width, device=device),
+        )
+        pixel_x = pixel_x + 0.5
+        pixel_x = pixel_x.unsqueeze(0) - camera.x0.view(-1, 1, 1)
+        pixel_x = 2 * (pixel_x / camera.width) - 1.0
 
-    pixel_y = pixel_y + 0.5
-    pixel_y = pixel_y.unsqueeze(0) - camera.y0.view(-1, 1, 1)
-    pixel_y = 2 * (pixel_y / camera.height) - 1.0
+        pixel_y = pixel_y + 0.5
+        pixel_y = pixel_y.unsqueeze(0) - camera.y0.view(-1, 1, 1)
+        pixel_y = 2 * (pixel_y / camera.height) - 1.0
 
-    ray_dir = torch.stack((pixel_x * camera.tan_half_fov.view(-1, 1, 1),
-                          -pixel_y * camera.tan_half_fov.view(-1, 1, 1),
-                          -torch.ones_like(pixel_x)), dim=-1)
-    ray_dir = ray_dir.reshape(num_cameras, -1, 3)  # Flatten grid rays to 1D array
-    ray_orig = torch.zeros_like(ray_dir)
-    # Transform from camera to world coordinates
-    ray_orig, ray_dir = camera.extrinsics.inv_transform_rays(ray_orig, ray_dir)
-    ray_dir = torch.nn.functional.normalize(ray_dir, dim=-1)
-    ray_dir = ray_dir.reshape(-1, camera.height, camera.width, 3)
-    return ray_dir
+        ray_dir = torch.stack((pixel_x * camera.tan_half_fov.view(-1, 1, 1),
+                            -pixel_y * camera.tan_half_fov.view(-1, 1, 1),
+                            -torch.ones_like(pixel_x)), dim=-1)
+        ray_dir = ray_dir.reshape(num_cameras, -1, 3)  # Flatten grid rays to 1D array
+        ray_orig = torch.zeros_like(ray_dir)
+        # Transform from camera to world coordinates
+        ray_orig, ray_dir = camera.extrinsics.inv_transform_rays(ray_orig, ray_dir)
+        ray_dir = torch.nn.functional.normalize(ray_dir, dim=-1)
+        ray_dir = ray_dir.reshape(-1, camera.height, camera.width, 3)
+        return ray_dir
 
-def render(mesh, camera, light, random_background=True, val_background=False, device='cuda:0'):
-    # transform mesh
-    vertices_camera = camera.extrinsics.transform(mesh.vertices)
-    vertices_clip = camera.intrinsics.project(vertices_camera)
-    faces_int = mesh.faces.int()
-    # rasterize
-    glctx = dr.RasterizeCudaContext()
-
-    rast_out, rast_out_db = nvdiffrast.torch.rasterize(
-        glctx,
-        vertices_clip,
-        faces_int,
-        (camera.height, camera.width),
-    )
-    rast_out = torch.flip(rast_out, dims=(1,))
-    rast_out_db = torch.flip(rast_out_db, dims=(1,))
-    mask = torch.clamp(rast_out[..., -1:], 0, 1)
-    # interpolate normals, tangents & bitangents
-    normals, tangents, bitangents, texc, texd = interpolate_attributes(
-        rast_out,
-        rast_out_db,
-        mesh,
-    )
-    # texturing
-    material = mesh.materials[0]
-    def _proc_channel(texture_image):
+    def _proc_channel(self, texture_image):
         if texture_image is None:
             return None
         return nvdiffrast.torch.texture(
@@ -89,10 +67,34 @@ def render(mesh, camera, light, random_background=True, val_background=False, de
             filter_mode='linear-mipmap-linear',
             max_mip_level=9
         )
-    mapped_albedo = _proc_channel(material.diffuse_texture)
-    mapped_normal = _proc_channel(material.normals_texture)
-    mapped_metallic = _proc_channel(material.metallic_texture)
-    mapped_roughness = _proc_channel(material.roughness_texture)
+
+def render(mesh, camera, light, random_background=True, val_background=False, device='cuda:0'):
+    # transform mesh
+    vertices_camera = camera.extrinsics.transform(mesh.vertices)
+    vertices_clip = camera.intrinsics.project(vertices_camera)
+    faces_int = mesh.faces.int()
+
+    rast_out, rast_out_db = nvdiffrast.torch.rasterize(
+        self.glctx,
+        vertices_clip,
+        faces_int,
+        (camera.height, camera.width),
+    )
+    rast_out = torch.flip(rast_out, dims=(1,))
+    rast_out_db = torch.flip(rast_out_db, dims=(1,))
+    mask = torch.clamp(rast_out[..., -1:], 0, 1)
+    # interpolate normals, tangents & bitangents
+    normals, tangents, bitangents, texc, texd = self._interpolate_attributes(
+        rast_out,
+        rast_out_db,
+        mesh,
+    )
+    # texturing
+    material = mesh.materials[0]
+    mapped_albedo = self._proc_channel(material.diffuse_texture)
+    mapped_normal = self._proc_channel(material.normals_texture)
+    mapped_metallic = self._proc_channel(material.metallic_texture)
+    mapped_roughness = self._proc_channel(material.roughness_texture)
     # shading
     if mapped_normal is not None:
         shading_normals = torch.nn.functional.normalize(
@@ -106,7 +108,7 @@ def render(mesh, camera, light, random_background=True, val_background=False, de
     diffuse_light = light(shading_normals)
 
     if mapped_metallic is not None and mapped_roughness is not None:
-        viewdirs = -get_ray_dirs(camera, device=device)
+        viewdirs = -self._get_ray_dirs(camera, device=device)
         n_dot_v = (shading_normals * viewdirs).sum(-1, keepdim=True)
         reflective = n_dot_v * shading_normals * 2 - viewdirs
 
