@@ -4,7 +4,7 @@ import copy
 import torch
 import xatlas
 import numpy as np
-from src.our_kaolin import import_mesh, center_points, PBRMaterial, SurfaceMesh
+from src.third_party.kaolin import import_mesh, center_points, PBRMaterial, SurfaceMesh
 
 def load_mesh(filename, pbr_material_parameters, bsdf_path='assets/bsdf_256_256.bin', device="cuda:0"):
     # only for obj files
