@@ -18,9 +18,10 @@ def parse_args():
     
     # ========== Experiment Configuration ==========
     exp_group = parser.add_argument_group('Experiment Configuration')
-    exp_group.add_argument('--description',     type=str, default='',     help='Experiment description for logging')
-    exp_group.add_argument('--seed',            type=int, default=42,     help='Random seed for reproducibility')
-    exp_group.add_argument('--log_dir',         type=str, default='logs', help='Root directory for saving experiments')
+    exp_group.add_argument('--description',     type=str, default='',       help='Experiment description for logging')
+    exp_group.add_argument('--seed',            type=int, default=42,       help='Random seed for reproducibility')
+    exp_group.add_argument('--log_dir',         type=str, default='logs',   help='Root directory for saving experiments')
+    exp_group.add_argument('--device',          type=str, default='cuda:0', help='Device to run computations')
     
     # ========== Input Data ==========
     data_group = parser.add_argument_group('Input Data')

@@ -27,9 +27,8 @@ class Trainer:
         renderer, 
         stage, 
         config,
-        device='cuda:0'
     ):
-        self.device = device
+        self.device = config.device
         self.mesh = mesh
         self.texture = texture
         self.renderer = renderer
