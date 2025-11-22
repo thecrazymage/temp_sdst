@@ -37,8 +37,8 @@ from pytorch3d.io import (
 sys.path.append(".")
 from parameterize_mesh import parameterize_mesh
 
-SUBSET = "./objaverse_eval/eval_data/objaverse_subset.txt"
-DATA_DIR = "./objaverse_eval/eval_data/objaverse/"
+SUBSET = "./objaverse_eval/assets/objaverse_subset.txt"
+DATA_DIR = "./objaverse_eval/eval_data/"
 OBJ_DIR = "./objaverse_eval/eval_data/objaverse/obj"
 BLENDER_EXE = "./objaverse_eval/blender-3.3.21-linux-x64/blender"
 
@@ -106,7 +106,7 @@ def adjust_uv_map(faces, aux, device=DEVICE):
 def load_and_adjust_mesh(mesh_path, device=DEVICE):
     verts, faces, aux = load_obj(mesh_path, device=device)
 
-    dummy_texture = Image.open("./objaverse_eval/eval_data/white.png").convert("RGB").resize((512, 512))
+    dummy_texture = Image.open("./objaverse_eval/assets/white.png").convert("RGB").resize((512, 512))
 
     # collapse textures of multiple materials to one texture map
     new_verts_uvs, new_faces_uvs = adjust_uv_map(faces, aux)
