@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # -------------------------------------------------------------------------
-# Modifications Copyright (c) 2025 [Aliev Mishan]
+# Modifications Copyright (c) 2025 Aliev Mishan.
 #
 # This file is a derivative work based on NVIDIA Kaolin.
 # It creates a standalone module by combining several classes and functions 
