@@ -1,5 +1,6 @@
-logs/
-data/objaverse/
-cached_prompts/
 __pycache__/
+logs/
+cached_prompts/
 draft/
+blender*/
+objaverse_eval/eval_data/objaverse
