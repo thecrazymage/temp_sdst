@@ -3,4 +3,4 @@ logs/
 cached_prompts/
 draft/
 blender*/
-objaverse_eval/objaverse
+objaverse_eval/objaverse_data

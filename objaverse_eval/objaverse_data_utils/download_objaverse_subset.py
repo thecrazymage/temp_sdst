@@ -38,11 +38,13 @@ sys.path.append(".")
 from parameterize_mesh import parameterize_mesh
 
 SUBSET = "./objaverse_eval/assets/objaverse_subset.txt"
-DATA_DIR = "./objaverse_eval/eval_data/"
-OBJ_DIR = "./objaverse_eval/eval_data/objaverse/obj"
+DATA_DIR = "./objaverse_eval/"
+GLB_DIR = "./objaverse_eval/objaverse_data/glbs"
+OBJ_DIR = "./objaverse_eval/objaverse_data/obj"
 BLENDER_EXE = "./objaverse_eval/blender-3.3.21-linux-x64/blender"
 
 os.makedirs(DATA_DIR, exist_ok=True)
+os.makedirs(GLB_DIR, exist_ok=True)
 os.makedirs(OBJ_DIR, exist_ok=True)
 
 # Setup
@@ -148,31 +150,37 @@ if __name__ == "__main__":
     subset_uids = [name.split("_")[-1] for name in objaverse_subset]
     uid_to_name = dict(zip(subset_uids, objaverse_subset))
 
-    # cache objects to DATA_DIR
-    objaverse._VERSIONED_PATH = str(DATA_DIR)
-    objects = objaverse.load_objects(subset_uids)
+    TEMP_DOWNLOAD_DIR = Path(DATA_DIR) / "temp_objaverse_cache"
+    objaverse._VERSIONED_PATH = str(TEMP_DOWNLOAD_DIR)
 
+    print("=> downloading objects...")
+    objects = objaverse.load_objects(subset_uids)
+    
     print("=> processing...")
-    for key, value in tqdm(objects.items()):
+    for uid, original_path_str in tqdm(objects.items()):
+
+        original_path = Path(original_path_str)
+        base_name = uid_to_name.get(uid, uid).replace(" ", "_")
+        new_filename = f"{base_name}.glb"
+
+        target_glb_path = Path(GLB_DIR) / new_filename
+        shutil.move(str(original_path), str(target_glb_path))
+
         cmd = [
             str(BLENDER_EXE), # NOTE please make sure you installed blender
-            "--background", "--factory-startup", "--python", "objaverse_eval/utils/blender_process_glb.py", "--",
-            str(value),
+            "--background", "--factory-startup", "--python", "objaverse_eval/objaverse_data_utils/blender_process_glb.py", "--",
+            str(target_glb_path),
             OBJ_DIR
         ]
         _ = subprocess.call(cmd, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
 
-        output_dir = Path(OBJ_DIR) / str(Path(value).stem)
-        target_output_dir = Path(OBJ_DIR) / uid_to_name[key]
-        if target_output_dir.exists():    
-            shutil.rmtree(target_output_dir)
-        output_dir = output_dir.rename(target_output_dir)
-
-        obj_path = output_dir / "mesh.obj"
-        mtl_path = output_dir / "mesh.mtl"
+        expected_output_dir = Path(OBJ_DIR) / target_glb_path.stem
+        obj_path = expected_output_dir / "mesh.obj"
+        mtl_path = expected_output_dir / "mesh.mtl"
 
         remove_tails(mtl_path)
         collapse_objects(obj_path, obj_path, DEVICE, inplace=True)
         parameterize_mesh(obj_path, obj_path) # xatlas produces great UVs
 
+    shutil.rmtree(TEMP_DOWNLOAD_DIR)
     print("=> done!")
