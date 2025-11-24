@@ -16,12 +16,12 @@ Example usage:
 Here, input_model_paths.json is a json file containing a list of paths to .glb.
 """
 
-import argparse
-import math
 import os
-import random
 import sys
+import math
 import time
+import random
+import argparse
 import urllib.request
 from typing import Any, Callable, Dict, Generator, List, Literal, Optional, Set, Tuple
 
@@ -75,16 +75,23 @@ render.resolution_x = 512
 render.resolution_y = 512
 render.resolution_percentage = 100
 
-prefs = bpy.context.preferences.addons["cycles"].preferences
-prefs.compute_device_type = args.device
-prefs.get_devices()
-for d in prefs.devices:
-    d.use = (d.type == args.device.upper())
-if not any(d.use for d in prefs.devices):
-    raise RuntimeError(f"No {args.device} devices found")
+if args.device == "CPU":
+    scene.cycles.device = "CPU"
+    scene.cycles.denoiser = "OPENIMAGEDENOISE"
+else:
+    prefs = bpy.context.preferences.addons["cycles"].preferences
+    prefs.compute_device_type = args.device
+    prefs.get_devices()
+    
+    for d in prefs.devices:
+        d.use = (d.type == args.device.upper())
 
-scene.cycles.device = "GPU"
-scene.cycles.denoiser = 'OPTIX' if args.device.upper() == 'OPTIX' else 'OPENIMAGEDENOISE'
+    if not any(d.use for d in prefs.devices):
+        raise RuntimeError(f"No {args.device} devices found")
+
+    scene.cycles.device = "GPU"
+    scene.cycles.denoiser = 'OPTIX' if args.device.upper() == 'OPTIX' else 'OPENIMAGEDENOISE'
+
 scene.cycles.samples = 32
 scene.cycles.diffuse_bounces = 1
 scene.cycles.glossy_bounces = 1
