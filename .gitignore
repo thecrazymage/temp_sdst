@@ -4,3 +4,4 @@ cached_prompts/
 draft/
 blender*/
 objaverse_eval/objaverse_data
+objaverse_eval/rendered_frames
