@@ -311,7 +311,11 @@ def save_images(object_file: str) -> None:
     # load the object
     load_object(object_file)
     shade_smooth()
-    object_uid = os.path.splitext(os.path.basename(object_file))[0]
+    parent_dir_name = os.path.basename(os.path.dirname(object_file))
+    if parent_dir_name.startswith("model_stage_"):
+        object_uid = os.path.basename(os.path.dirname(os.path.dirname(object_file)))
+    else:
+        object_uid = os.path.splitext(os.path.basename(object_file))[0]
     normalize_scene()
     add_lighting()
     cam, cam_constraint = setup_camera()
