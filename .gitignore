@@ -5,4 +5,4 @@ draft/
 blender*/
 objaverse_eval/objaverse_data
 objaverse_eval/renders
-objaverse_eval/metrics/pt_inception-2015-12-05-6726825d.pth
+objaverse_eval/assets/pt_inception-2015-12-05-6726825d.pth
