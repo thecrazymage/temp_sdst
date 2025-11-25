@@ -84,7 +84,8 @@ def main():
     print("Encoding prompt embeddings...")
     prompt_embeddings = encode_prompt(
         prompt, 
-        directional=args.use_dir_embeddings
+        directional=args.use_dir_embeddings,
+        device=args.device
     )
     
     print("Initializing textures...")    
