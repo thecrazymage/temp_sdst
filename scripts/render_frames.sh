@@ -1,5 +1,4 @@
 #!/bin/bash
-set -uo pipefail
 
 BLENDER_PATH="./objaverse_eval/blender-3.3.21-linux-x64/blender"
 PYTHON_SCRIPT_PATH="./objaverse_eval/render_utils/blender_script.py"
