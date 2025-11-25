@@ -22,6 +22,7 @@ def parse_args():
     exp_group.add_argument('--seed',            type=int, default=42,       help='Random seed for reproducibility')
     exp_group.add_argument('--log_dir',         type=str, default='logs',   help='Root directory for saving experiments')
     exp_group.add_argument('--device',          type=str, default='cuda:0', help='Device to run computations')
+    exp_group.add_argument('--objaverse_eval',  action='store_true',        help='Use Objaverse evaluation mode')
     
     # ========== Input Data ==========
     data_group = parser.add_argument_group('Input Data')
