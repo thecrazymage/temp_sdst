@@ -80,6 +80,6 @@ def encode_prompt(prompt, directional=True, deepfloyd_model='DeepFloyd/IF-I-XL-v
 
     prompt_embeddings = pipe.encode_prompt(prompts)
     # mishan: don't save for now
-    # torch.save(prompt_embeddings, embedding_path)
+    torch.save(prompt_embeddings, embedding_path)
     
     return prompt_embeddings

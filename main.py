@@ -72,6 +72,15 @@ def main():
     prompt = args.prompt
     timestamp = datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
     experiment_name = f"{args.prompt}_{timestamp}"
+
+    if args.objaverse_eval:
+        parts = args.prompt.split("_")
+        name = " ".join(parts[:-1])
+        number = parts[-1]
+        experiment_name = f"{name.replace(' ', '_')}_{number}"
+        prompt = name
+        args.prompt = name
+
     experiment_path = os.path.join(args.log_dir, experiment_name)
     args.experiment_path = experiment_path
     os.makedirs(experiment_path, exist_ok=True)
@@ -108,7 +117,8 @@ def main():
         trainer = Trainer(mesh, texture, prompt_embeddings, renderer, 'i', args)
         trainer.run_training_loop()
         
-        save_texture(experiment_path, texture, 'i')
+        if not args.objaverse_eval:
+            save_texture(experiment_path, texture, 'i')
         
         del trainer
         flush()
@@ -124,7 +134,8 @@ def main():
         trainer = Trainer(mesh, texture, prompt_embeddings, renderer, 'ii', args)
         trainer.run_training_loop()
         
-        save_texture(experiment_path, texture, 'ii')
+        if not args.objaverse_eval:
+            save_texture(experiment_path, texture, 'ii')
         
         del trainer
         flush()

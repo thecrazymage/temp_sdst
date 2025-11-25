@@ -39,8 +39,10 @@ class Trainer:
         self.batch_size = config.batch_size
         self.eval_plot_iter = config.eval_plot_iter
         self.experiment_path = config.experiment_path
+        self.objaverse_eval = config.objaverse_eval 
         self.progress_dir = os.path.join(self.experiment_path, f'texture_progress_stage_{self.stage}')
-        os.makedirs(self.progress_dir, exist_ok=True)
+        if not self.objaverse_eval:
+            os.makedirs(self.progress_dir, exist_ok=True)
 
         self.camera_target, self.r = self._get_camera_parameters()
         
@@ -270,11 +272,12 @@ class Trainer:
         for i in tqdm(range(self.num_training_steps), desc=f"Stage {self.stage}"):
             self.training_step(i)
             
-            if i % self.eval_plot_iter == 0:
+            if not self.objaverse_eval and i % self.eval_plot_iter == 0:
                 self.validation_step(i)
         
-        self.validation_step(self.num_training_steps)
-        self.make_video(self.num_training_steps)
+        if not self.objaverse_eval:
+            self.validation_step(self.num_training_steps)
+            self.make_video(self.num_training_steps)
         
         # Save textured mesh
         model_dir = os.path.join(self.experiment_path, f'model_stage_{self.stage}')
