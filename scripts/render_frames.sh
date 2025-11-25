@@ -8,7 +8,6 @@ BASE_OUTPUT_ROOT="./objaverse_eval/renders"
 
 if (( $# < 2 )); then
     echo "Usage: bash render_frames.sh <input_folder> <stage> [custom_output_name]"
-    echo "Example: bash render_frames.sh ./data i my_custom_run"
     exit 1
 fi
 
