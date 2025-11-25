@@ -1,6 +1,6 @@
 # -----------------------------------------------------------------------------
 # Adapted from Text2Tex (https://github.com/daveredrum/Text2Tex)
-# Copyright (c) 2023 Dave Zhenyu Chen et al.
+# Copyright (c) 2023-2024 Dave Zhenyu Chen et al.
 # Licensed under CC BY-NC-SA 3.0.
 #
 # Modifications Copyright (c) 2025 Aliev Mishan.
