@@ -3,7 +3,7 @@
 BLENDER_PATH="./objaverse_eval/blender-3.3.21-linux-x64/blender"
 PYTHON_SCRIPT_PATH="./objaverse_eval/render_utils/blender_script.py"
 DATA_PATH="./objaverse_eval/objaverse_data/glbs"
-OUTPUT_DIR="./objaverse_eval/rendered_frames/ground_truth/"
+OUTPUT_DIR="./objaverse_eval/renders/ground_truth/"
 ENV_MAP_PATH="./objaverse_eval/assets/studio_small_06_2k.hdr"
 
 # Function to process meshes

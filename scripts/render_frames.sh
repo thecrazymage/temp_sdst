@@ -5,51 +5,54 @@ BLENDER_PATH="./objaverse_eval/blender-3.3.21-linux-x64/blender"
 PYTHON_SCRIPT_PATH="./objaverse_eval/render_utils/blender_script.py"
 PATH_TO_BACKGROUND_IMAGE="./objaverse_eval/assets/background.png"
 ENV_MAP_PATH="./objaverse_eval/assets/studio_small_06_2k.hdr"
+BASE_OUTPUT_ROOT="./objaverse_eval/renders"
 
-if (( $# < 3 )); then
-    echo "Usage: bash render_frames.sh path/to/objaverse/evalation/folder path/to/output/folder <stage_name>"
+if (( $# < 2 )); then
+    echo "Usage: bash render_frames.sh <input_folder> <stage> [custom_output_name]"
+    echo "Example: bash render_frames.sh ./data i my_custom_run"
     exit 1
 fi
 
-start_dir="$1"
-output_dir="${2%/}/"
-STAGE="$3"
-
-move_models() {
-    local source_parent="$1"
-    local dest_parent="$2"
-    
-    mkdir -p "$dest_parent/models"
-    
-    for dir in "$source_parent"*/; do
-        [[ -d "$dir" ]] || continue
-        
-        local source_dir="${dir%/}/model_stage_$STAGE"
-        local dest_dir="$dest_parent/models/$(basename "${dir%/}")"
-        
-        if [[ -d "$source_dir" ]]; then
-            mkdir -p "$dest_dir"
-            cp -a "$source_dir/." "$dest_dir/"
-            echo "Copied: $source_dir -> $dest_dir"
-        else
-            echo -e "\nSource directory $source_dir does not exist. Skipping.\n" >&2
-        fi
-    done
-}
+INPUT_ROOT_DIR="${1%/}"
+STAGE="$2"
+if [ -n "${3:-}" ]; then
+    RUN_NAME="$3"
+else
+    RUN_NAME=$(basename "$INPUT_ROOT_DIR")
+fi
+OUTPUT_DIR="$BASE_OUTPUT_ROOT/$RUN_NAME"
 
 render_models() {
-    local input_dir="$1"
-    local output_dir="$2"
-    local trajectory="$3"
+    local input_root="$1"
+    local output_root="$2"
+    local stage="$3"
+    local trajectory="$4"
     
-    find "$input_dir" -type f -name "*.obj" | while IFS= read -r obj_file; do
-        echo "Processing: $obj_file (trajectory: $trajectory)"
-        "$BLENDER_PATH" -b -P "$PYTHON_SCRIPT_PATH" -- \
+    for model_dir in "$input_root"/*/; do
+        [ -d "$model_dir" ] || continue
+        local stage_dir="$model_dir/model_stage_$stage"
+        
+        if [ ! -d "$stage_dir" ]; then
+            echo "Error: The stage folder '$stage_dir' could not be found for the model '$(basename "$model_dir")'." >&2
+            continue
+        fi
+        
+        local obj_file=$(find "$stage_dir" -maxdepth 1 -type f -name "*.obj" | head -n 1)
+
+        if [ -z "$obj_file" ]; then
+            echo "Error: No .obj or .glb file found in $stage_dir. Skipping." >&2
+            continue
+        fi
+
+        echo "Processing: $(basename "$model_dir")"
+
+        "$BLENDER_PATH" -b -noaudio -P "$PYTHON_SCRIPT_PATH" -- \
             --object_path "$obj_file" \
-            --output_dir "$output_dir" \
+            --output_dir "$output_root" \
             --engine "CYCLES" \
             --trajectory "$trajectory" \
             --camera_dist 1.4 \
+            --env_map_path "$ENV_MAP_PATH" \
             --env_map_strength 0.7 \
             --device OPTIX
     done
@@ -77,16 +80,13 @@ traverse_directories_and_compile_gifs() {
     done
 }
 
-echo "Step 1: Moving models..."
-move_models "$start_dir" "$output_dir"
+echo "Step 1: Rendering frames for FID (frames)..."
+render_models "$INPUT_ROOT_DIR" "$OUTPUT_DIR" "$STAGE" "frames"
 
-echo "Step 2: Rendering frames for FID..."
-render_models "${output_dir}models" "$output_dir" "frames"
+echo "Step 2: Rendering frames for video (video)..."
+render_models "$INPUT_ROOT_DIR" "$OUTPUT_DIR" "$STAGE" "video"
 
-echo "Step 3: Rendering frames for video..."
-render_models "${output_dir}models" "$output_dir" "video"
-
-echo "Step 4: Compiling videos..."
+echo "Step 3: Compiling videos..."
 traverse_directories_and_compile_gifs "${output_dir}video" "${output_dir}mp4"
 
 echo "Done!"
