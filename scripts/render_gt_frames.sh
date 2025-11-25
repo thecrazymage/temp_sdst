@@ -20,6 +20,7 @@ process_mesh() {
         --env_map_strength 0.7 \
         --device CPU
 }
+# We use CPU above because of problems with .glb and GPU rendering
 
 if [ ! -d "$DATA_PATH" ]; then
     echo "Error: Folder $DATA_PATH does not exist"
