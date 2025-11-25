@@ -38,7 +38,7 @@ def get_view_direction(thetas, phis):
 
     return res
 
-def encode_prompt(prompt, directional=True, deepfloyd_model='DeepFloyd/IF-I-XL-v1.0', cache_dir='cached_prompts'):
+def encode_prompt(prompt, directional=True, deepfloyd_model='DeepFloyd/IF-I-XL-v1.0', cache_dir='cached_prompts', device='cuda:0'):
 
     cache_path = Path(cache_dir)
     cache_path.mkdir(exist_ok=True)
@@ -58,6 +58,19 @@ def encode_prompt(prompt, directional=True, deepfloyd_model='DeepFloyd/IF-I-XL-v
         text_encoder=text_encoder,
         unet=None,
     )
+    # mishan: check for results from it
+    # text_encoder = T5EncoderModel.from_pretrained(
+    #     deepfloyd_model,
+    #     subfolder="text_encoder",
+    #     torch_dtype=torch.float16,
+    #     use_safetensors=True  
+    # ).to(device)
+    # pipe = DiffusionPipeline.from_pretrained(
+    #     deepfloyd_model,
+    #     text_encoder=text_encoder,
+    #     unet=None,
+    #     torch_dtype=torch.float16
+    # ).to(device)
 
     if directional:
         directions = ['front view', 'side view', 'backside view', 'top view', 'bottom view']
@@ -66,6 +79,7 @@ def encode_prompt(prompt, directional=True, deepfloyd_model='DeepFloyd/IF-I-XL-v
         prompts = [prompt]
 
     prompt_embeddings = pipe.encode_prompt(prompts)
-    torch.save(prompt_embeddings, embedding_path)
+    # mishan: don't save for now
+    # torch.save(prompt_embeddings, embedding_path)
     
     return prompt_embeddings
