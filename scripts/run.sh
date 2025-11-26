@@ -7,7 +7,7 @@ conda activate sdst
 PROMPT="A cow in a spider-man suit"
 
 python main.py \
-    --mesh_location "data/spot.obj" \
+    --mesh_location "assets/spot.obj" \
     --prompt "$PROMPT" \
     --num_steps_i 500 \
     --num_steps_ii 1000 \
