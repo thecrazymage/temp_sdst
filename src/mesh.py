@@ -18,7 +18,7 @@ def load_mesh(filename, pbr_material_parameters, bsdf_path='assets/bsdf_256_256.
         mesh.faces.cpu(),
     )
     uvs = torch.tensor(uvs, device=device)
-    indices = torch.tensor(indices, dtype=torch.long, device=device)
+    indices = torch.tensor(indices.astype(np.int64), dtype=torch.long, device=device)
 
     my_material = PBRMaterial(
         **pbr_material_parameters,
