@@ -1,4 +1,5 @@
 #!/bin/bash
+
 module load Python CUDA/11.7 gnu10
 source deactivate
 conda activate t2t

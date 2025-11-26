@@ -9,7 +9,7 @@ RUN_NAME="objaverse_eval_${START_TIME}"
 LOGS_DIR="./logs/$RUN_NAME"
 mkdir -p "$LOGS_DIR"
 
-TEMP_RUN_DIR="./temp_run/$RUN_NAME"
+TEMP_RUN_DIR="./logs/run_logs/$RUN_NAME"
 mkdir -p "$TEMP_RUN_DIR"
 mkdir -p "${TEMP_RUN_DIR}/scripts"
 mkdir -p "${TEMP_RUN_DIR}/tasks"
@@ -49,11 +49,22 @@ LOGS_DIR="$LOGS_DIR"
 
 mapfile -t FOLDERS < <(sed -n "\$((START_INDEX+1)),\$((END_INDEX+1))p" "\$FOLDERS_FILE")
 
+total_in_batch=\${#FOLDERS[@]}
+current_step=0
+
 for FOLDER in "\${FOLDERS[@]}"; do
+
+    ((current_step++))
+    echo "------------------------------------------------------------------------------"
+    echo "[Batch Progress: \$current_step/\$total_in_batch] Processing: \$FOLDER"
+    echo "------------------------------------------------------------------------------"
+
     if [[ -d "\$LOGS_DIR/\$FOLDER" ]]; then
         rm -rf "\$LOGS_DIR/\$FOLDER"
     fi
+
     mesh_location="\$BASE_DIR/\$FOLDER/mesh.obj"
+    
     python main.py \
         --log_dir "\$LOGS_DIR" \
         --mesh_location "\$mesh_location" \
@@ -63,7 +74,8 @@ for FOLDER in "\${FOLDERS[@]}"; do
         --num_steps_ii 1000 \
         --use_dir_embeddings \
         --guidance_scale_i 15 \
-        --guidance_scale_ii 10
+        --guidance_scale_ii 10 \
+        --prompt_cache_dir "cached_prompts_fp16"
 done
 rm -f "$BATCH_SCRIPT"
 EOT
