@@ -85,11 +85,11 @@ def main():
     args.experiment_path = experiment_path
     os.makedirs(experiment_path, exist_ok=True)
     
-    print(f"\n{'='*60}")
+    print(f"\n{'='*80}")
     print(f"Experiment: {experiment_name}")
     print(f"Prompt: '{prompt}'")
     print(f"Output directory: {experiment_path}")
-    print(f"{'='*60}\n")
+    print(f"{'='*80}\n")
     
     print("Encoding prompt embeddings...")
     prompt_embeddings = encode_prompt(
@@ -110,9 +110,9 @@ def main():
     
     phase1_time = 0.0
     if args.num_steps_i > 0:
-        print(f"\n{'='*60}")
+        print(f"\n{'='*80}")
         print("Starting Stage i ...")
-        print(f"{'='*60}")
+        print(f"{'='*80}")
         
         start_stage1 = time.time()
         trainer = Trainer(mesh, texture, prompt_embeddings, renderer, 'i', args)
@@ -127,9 +127,9 @@ def main():
     
     phase2_time = 0.0
     if args.num_steps_ii > 0:
-        print(f"\n{'='*60}")
+        print(f"\n{'='*80}")
         print("Starting Stage ii ...")
-        print(f"{'='*60}")
+        print(f"{'='*80}")
         
         start_stage2 = time.time()
         trainer = Trainer(mesh, texture, prompt_embeddings, renderer, 'ii', args)
@@ -156,13 +156,13 @@ def main():
         yaml.dump(args_dict, f, default_flow_style=False)
     print(f"Configuration saved to {config_path}")
     
-    print(f"\n{'='*60}")
+    print(f"\n{'='*80}")
     print("Experiment completed successfully!")
     print(f"Results saved to: {experiment_path}")
     print(f"Stage I time: {phase1_time:.2f}s")
     print(f"Stage II time: {phase2_time:.2f}s")
     print(f"Total time: {total_time:.2f}s")
-    print(f"{'='*60}\n")
+    print(f"{'='*80}\n")
 
 
 if __name__ == '__main__':
