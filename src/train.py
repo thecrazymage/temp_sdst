@@ -2,12 +2,12 @@ import os
 import math
 import torch
 import imageio
+import envlight
 import numpy as np
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import torch.nn.functional as F
 
-import envlight
 from src.guidance import SDSLoss
 from src.camera import get_camera
 from src.mesh import copy_mesh, write_obj
