@@ -95,6 +95,7 @@ def main():
     prompt_embeddings = encode_prompt(
         prompt, 
         directional=args.use_dir_embeddings,
+        cache_dir=args.prompt_cache_dir,
         device=args.device
     )
     
