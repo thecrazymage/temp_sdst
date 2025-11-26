@@ -1,5 +1,8 @@
 #!/bin/bash
 
+source deactivate
+conda activate castex
+
 BLENDER_PATH="./objaverse_eval/blender-3.3.21-linux-x64/blender"
 PYTHON_SCRIPT_PATH="./objaverse_eval/render_utils/blender_script.py"
 PATH_TO_BACKGROUND_IMAGE="./objaverse_eval/assets/background.png"
@@ -85,6 +88,6 @@ echo "Step 2: Rendering frames for video (video)..."
 render_models "$INPUT_ROOT_DIR" "$OUTPUT_DIR" "$STAGE" "video"
 
 echo "Step 3: Compiling videos..."
-traverse_directories_and_compile_gifs "${output_dir}video" "${output_dir}mp4"
+traverse_directories_and_compile_gifs "${OUTPUT_DIR}/video" "${OUTPUT_DIR}/mp4"
 
 echo "Done!"

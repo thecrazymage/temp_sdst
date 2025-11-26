@@ -2,7 +2,7 @@
 
 module load Python CUDA/11.7 gnu10
 source deactivate
-conda activate sds_evaluation
+conda activate castex
 
 if [ -z "$1" ]; then
     echo "Usage: bash run_metrics.sh <path_to_method_frames>"

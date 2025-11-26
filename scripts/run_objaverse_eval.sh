@@ -39,7 +39,7 @@ for ((batch = 0; batch < NUM_BATCHES; batch++)); do
 
 module load Python CUDA/11.7 gnu10
 source deactivate
-conda activate sdst
+conda activate castex
 
 FOLDERS_FILE="$FOLDERS_FILE"
 START_INDEX=$START_INDEX
