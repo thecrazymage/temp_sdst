@@ -1,0 +1,34 @@
+name: castex
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - ffmpeg=4.3.2
+  - pyarrow=22.0.0
+  - pip=25.3
+  - pip:
+    - --find-links https://download.pytorch.org/whl/cu117/torch_stable.html
+    - torch==2.0.1
+    - torchvision==0.15.2
+    
+    - --find-links https://dl.fbaipublicfiles.com/pytorch3d/packaging/wheels/py310_cu117_pyt201/download.html
+    - pytorch3d==0.7.4
+    
+    - sentencepiece==0.2.0
+    - numpy==1.26.4
+    - matplotlib==3.7
+    - diffusers[torch]==0.30.3
+    - transformers==4.45.2
+    - scipy==1.15.3
+    - scikit-learn==1.7.2
+    - bitsandbytes==0.40.0
+    - trimesh==4.5.0
+    - xatlas==0.0.9
+    - objaverse==0.1.7
+    - envlight==0.1.0
+    - mathutils==3.3.0
+    - opencv-python==4.10.0.84
+    - Pillow==10.4.0
+    - imageio[opencv,ffmpeg]==2.36.0
+    - git+https://github.com/NVlabs/nvdiffrast.git@v0.3.3
