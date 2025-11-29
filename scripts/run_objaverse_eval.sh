@@ -37,7 +37,7 @@ for ((batch = 0; batch < NUM_BATCHES; batch++)); do
 #SBATCH --constraint="type_e"
 #SBATCH --time=15:0:0
 
-module load Python CUDA/11.7 gnu10
+module load Python CUDA/12.4 gnu10
 source deactivate
 conda activate castex
 
