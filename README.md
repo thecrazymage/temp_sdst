@@ -8,9 +8,7 @@
   <img src="https://img.shields.io/badge/🎉_Accepted_to_WACV_2026_🎉-2ea44f?style=for-the-badge&labelColor=2ea44f" alt="Accepted to WACV 2026"/>
 </div> -->
 <div align="center">
-  <span style="color: green; font-size: 18px; font-weight: bold;">
-    🎉 Accepted to WACV 2026 🎉
-  </span>
+  <b style="color: #2ea44f; font-size: 20px;">🎉 Accepted to WACV 2026 🎉</b>
 </div>
 
 <br>
