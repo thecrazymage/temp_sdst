@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 <div align="center">
-  <span style="font-size: 20px; font-weight: bold;">🎉 Accepted to WACV 2026 🎉</span>
+  <font color="#2ea44f" size="4"><b>🎉 Accepted to WACV 2026 🎉</b></font>
 </div>
 
 <br>
@@ -14,7 +14,7 @@ This repository contains the official implementation of the WACV 2026 paper:
 <br>
 **CasTex: Cascaded Text-to-Texture Synthesis via Explicit Texture Maps and Physically-Based Shading** 
 <br>
-by [Aliev Mishan](https://www.niessnerlab.org/members/zhenyu_chen/profile.html), [Dmitry Baranchuk](https://niessnerlab.org/members/yawar_siddiqui/profile.html), [Kirill Struminsky](https://niessnerlab.org/members/yawar_siddiqui/profile.html).
+by [Aliev Mishan](https://scholar.google.com/citations?user=QJz42PEAAAAJ&hl=en), [Dmitry Baranchuk](https://scholar.google.com/citations?user=NiPmk8oAAAAJ&hl=en&oi=ao), [Kirill Struminsky](https://scholar.google.com/citations?hl=en&user=q69zIO0AAAAJ).
 
 <!-- Teaser: Используйте GIF или PNG хорошего разрешения -->
 <!-- Если есть картинка с коровами, назовите её docs/teaser_cows.png -->
@@ -33,7 +33,7 @@ In our setup, score distillation sampling yields high-quality textures out-of-th
 In particular, we were able to omit implicit texture parameterization in favor of an explicit parameterization to improve the procedure.
 In the experiments, we show that our approach significantly outperforms state-of-the-art optimization-based solutions on public texture synthesis benchmarks.
 
-For more details, please check our [**Project Page**](https://thecrazymage.github.io/CasTex/).
+For more details, please check our [Project Page](https://thecrazymage.github.io/CasTex/).
 
 If you are interested in collaborating, please reach out to us via [alievmishan78@gmail.com](mailto:alievmishan78@gmail.com).
 
@@ -64,7 +64,7 @@ To make sure everything is set up and configured correctly, you can run the foll
 
 ## Benchmark on Objaverse subset
 
-To generate textures for the Objaverse objects as was proposed in Text2Tex paper, you need:
+To generate textures for the Objaverse objects as was proposed in Text2Tex paper, you need to run this commands from the root of your directory:
 1) download Blender 3.3.21
 ```.bash
 ./bash/download_blender.sh
