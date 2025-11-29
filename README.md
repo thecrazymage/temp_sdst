@@ -4,8 +4,13 @@
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://thecrazymage.github.io/CasTex/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-<div align="center">
+<!-- <div align="center">
   <img src="https://img.shields.io/badge/🎉_Accepted_to_WACV_2026_🎉-2ea44f?style=for-the-badge&labelColor=2ea44f" alt="Accepted to WACV 2026"/>
+</div> -->
+<div align="center">
+  <span style="color: green; font-size: 18px; font-weight: bold;">
+    🎉 Accepted to WACV 2026 🎉
+  </span>
 </div>
 
 <br>
