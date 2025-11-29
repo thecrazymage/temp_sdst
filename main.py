@@ -114,8 +114,8 @@ def main():
         print("Starting Stage i ...")
         print(f"{'='*80}")
         
-        start_stage1 = time.time()
         trainer = Trainer(mesh, texture, prompt_embeddings, renderer, 'i', args)
+        start_stage1 = time.time()
         trainer.run_training_loop()
         
         if not args.objaverse_eval:
@@ -131,8 +131,8 @@ def main():
         print("Starting Stage ii ...")
         print(f"{'='*80}")
         
-        start_stage2 = time.time()
         trainer = Trainer(mesh, texture, prompt_embeddings, renderer, 'ii', args)
+        start_stage2 = time.time()
         trainer.run_training_loop()
         
         if not args.objaverse_eval:
