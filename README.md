@@ -93,7 +93,8 @@ To generate textures for the Objaverse objects using the protocol from the [Text
     *These renders are required to compute FID and KID scores.*
 
     > **Verification:**
-    > You can quickly verify that your rendering pipeline finished correctly by running the sanity check script on the generated renders:
+    >
+    > To ensure that the all generation process completed successfully, run the sanity check on the output folder:
     > ```
     > bash scripts/sanity_check.sh -d objaverse_eval/renders/ground_truth/frames -ef 20 -ed 0 -esf 0
     > ```
@@ -106,7 +107,9 @@ To generate textures for the Objaverse objects using the protocol from the [Text
 
     **Output:** Generated textures and logs will be saved in `logs/objaverse_eval_{date}`.
 
-    > **Verification:** To verify that the all generation process completed successfully, run the sanity check on the output folder:
+    > **Verification:**
+    >
+    > To ensure that the all generation process completed successfully, run the sanity check on the output folder:
     > ```
     > bash scripts/sanity_check.sh -d logs/objaverse_eval_{date} -ef 1 -ed 2 -esf 6
     > ```
@@ -123,7 +126,8 @@ To generate textures for the Objaverse objects using the protocol from the [Text
     - This step also produces 360° videos for qualitative comparison in `objaverse_eval/renders/eval_{date}/mp4`.
 
     > **Verification:**
-    > To ensure that all frames were rendered correctly, run the sanity check on the output folder:
+    >
+    > To ensure that the all generation process completed successfully, run the sanity check on the output folder:
     > ```.bash
     > bash scripts/sanity_check.sh -d objaverse_eval/renders/eval_{date}/frames -ef 20 -ed 0 -esf 0
     > ```
@@ -132,7 +136,7 @@ To generate textures for the Objaverse objects using the protocol from the [Text
     ```.bash
     scripts/run_metrics.sh objaverse_eval/renders/eval_{date}/frames/
     ```
-    This script compares the generated renders against the ground truth from `objaverse_eval/renders/ground_truth/frames` and outputs the FID and KID scores.
+    This script compares the generated renders from `objaverse_eval/renders/eval_{date}/frames/` against the ground truth from `objaverse_eval/renders/ground_truth/frames` and outputs the FID and KID scores.
 
 ## Acknowledgement
 
@@ -150,7 +154,8 @@ To generate textures for the Objaverse objects using the protocol from the [Text
 
 ## License
 
-Hello, darling)
+
+
 <!-- ## Draft
 Credits:
 This project includes code adapted from the NVIDIA Kaolin library (Apache 2.0 License).
