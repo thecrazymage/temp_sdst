@@ -16,11 +16,6 @@ This repository contains the official implementation of the WACV 2026 paper:
 <br>
 by [Aliev Mishan](https://scholar.google.com/citations?user=QJz42PEAAAAJ&hl=en), [Dmitry Baranchuk](https://scholar.google.com/citations?user=NiPmk8oAAAAJ&hl=en&oi=ao), [Kirill Struminsky](https://scholar.google.com/citations?hl=en&user=q69zIO0AAAAJ).
 
-<!-- Teaser: Используйте GIF или PNG хорошего разрешения -->
-<!-- Если есть картинка с коровами, назовите её docs/teaser_cows.png -->
-<!-- ![Teaser image](docs/teaser.png) -->
-
-
 ### Abstract
 
 This work investigates text-to-texture synthesis using diffusion models to generate physically-based texture maps.
@@ -34,6 +29,10 @@ In particular, we were able to omit implicit texture parameterization in favor o
 In the experiments, we show that our approach significantly outperforms state-of-the-art optimization-based solutions on public texture synthesis benchmarks.
 
 For more details and results, please visit our [Project Page](https://thecrazymage.github.io/CasTex/).
+
+<!-- Teaser: Используйте GIF или PNG хорошего разрешения -->
+<!-- Если есть картинка с коровами, назовите её docs/teaser_cows.png -->
+<!-- ![Teaser image](docs/teaser.png) -->
 
 ## Table of Contents
 - [Installation](#installation)
@@ -87,11 +86,17 @@ To generate textures for the Objaverse objects using the protocol from the [Text
     ```.bash
     bash scripts/render_gt_frames.sh
     ```
-    This script renders the original (ground truth) `.glb` files from the Objaverse subset using Blender.
+    This script renders the original (ground truth) `.glb` files from the Objaverse subset using **Blender**.
     
-    **Output:** All ground truth renders will be saved in `objaverse_eval/renders/ground_truth/`.
+    **Output:** All ground truth renders will be saved in `objaverse_eval/renders/ground_truth/frames`.
 
     *These renders are required to compute FID and KID scores.*
+
+    > **Verification:**
+    > You can quickly verify that your rendering pipeline finished correctly by running the sanity check script on the generated renders:
+    > ```
+    > bash scripts/sanity_check.sh -d objaverse_eval/renders/ground_truth/frames -ef 20 -ed 0 -esf 0
+    > ```
 
 4) To generate textures for the preprocessed objects:
     ```.bash
@@ -101,22 +106,33 @@ To generate textures for the Objaverse objects using the protocol from the [Text
 
     **Output:** Generated textures and logs will be saved in `logs/objaverse_eval_{date}`.
 
-    > **Verification:** You can quickly check if the generation finished correctly by running the sanity check script on the output folder:
+    > **Verification:** To verify that the all generation process completed successfully, run the sanity check on the output folder:
     > ```
     > bash scripts/sanity_check.sh -d logs/objaverse_eval_{date} -ef 1 -ed 2 -esf 6
     > ```
 
-6) render generated textures
+5) To render the textured meshes to produce images for evaluation:
     ```.bash
-    scripts/render_frames.sh logs/objaverse_eval_{date}/ ii objaverse_eval_{date}
+    bash scripts/render_frames.sh logs/objaverse_eval_{date}/ ii eval_{date}
     ```
-    After training you need to render your trained textures from stage `ii` with Blender. All rendered data will be in `objaverse_eval/renders/objaverse_eval_{date}/`. This command also render videos for future side-by-side comparision.
 
-7) calculate FID/KID
+    This script renders the textures generated in stage `ii` from `logs/objaverse_eval_{date}/` using **Blender**.
+
+    **Output:**
+    - Rendered images will be stored in `objaverse_eval/renders/eval_{date}/frames`.
+    - This step also produces 360° videos for qualitative comparison in `objaverse_eval/renders/eval_{date}/mp4`.
+
+    > **Verification:**
+    > To ensure that all frames were rendered correctly, run the sanity check on the output folder:
+    > ```.bash
+    > bash scripts/sanity_check.sh -d objaverse_eval/renders/eval_{date}/frames -ef 20 -ed 0 -esf 0
+    > ```
+
+6) To calculate FID and KID:
     ```.bash
-    scripts/run_metrics.sh objaverse_eval/renders/objaverse_eval_{date}/frames/
+    scripts/run_metrics.sh objaverse_eval/renders/eval_{date}/frames/
     ```
-    After all preparations we finally can calculate FID/KID metrics. 
+    This script compares the generated renders against the ground truth from `objaverse_eval/renders/ground_truth/frames` and outputs the FID and KID scores.
 
 ## Acknowledgement
 
