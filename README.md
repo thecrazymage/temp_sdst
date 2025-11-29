@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 <div align="center">
-  <font color="#2ea44f" size="4"><b>🎉 Accepted to WACV 2026 🎉</b></font>
+  <h3><span style="color:green">🎉 Accepted to WACV 2026 🎉</span></h3>
 </div>
 
 <br>
