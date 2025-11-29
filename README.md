@@ -33,73 +33,88 @@ In our setup, score distillation sampling yields high-quality textures out-of-th
 In particular, we were able to omit implicit texture parameterization in favor of an explicit parameterization to improve the procedure.
 In the experiments, we show that our approach significantly outperforms state-of-the-art optimization-based solutions on public texture synthesis benchmarks.
 
-For more details, please check our [Project Page](https://thecrazymage.github.io/CasTex/).
-
-If you are interested in collaborating, please reach out to us via [alievmishan78@gmail.com](mailto:alievmishan78@gmail.com).
-
+For more details and results, please visit our [Project Page](https://thecrazymage.github.io/CasTex/).
 
 ## Table of Contents
-- [Setup Environment](#setup-environment)
+- [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Benchmark on Objaverse subset](#benchmark-on-objaverse-subset)
 - [Acknowledgement](#acknowledgement)
 - [Citation](#citation)
 - [License](#license)
 
-## Setup Environment
+## Installation
 
-See [environment.yml](environment.yml) for exact library dependencies. You can use the following commands with Miniconda3 to create and activate your Python environment:
+Please refer to [environment.yml](environment.yml) for the complete list of dependencies. To create and activate the environment using Miniconda3, run the following commands:
 
 ```.bash
-./bash/setup_environment.sh
+git clone https://github.com/thecrazymage/CasTex.git
+cd CasTex
+
+bash scripts/setup_environment.sh
 conda activate castex
 ```
 
 ## Quick Start
 
-To make sure everything is set up and configured correctly, you can run the following script to generate your first texture.
-
+To generate a texture for a single object using a text prompt:
 ```.bash
-./bash/run.sh
+bash scripts/run.sh
 ```
+The generated PBR textures for stages `i` and `ii` will be saved in `logs/`.
 
 ## Benchmark on Objaverse subset
 
-To generate textures for the Objaverse objects as was proposed in [Text2Tex](https://arxiv.org/abs/2303.11396) paper, you need to run the next commands from the root of your directory:
-1) download Blender 3.3.21
-    ```.bash
-    ./bash/download_blender.sh
-    ```
-    It will be stored in `./objaverse_eval/blender-3.3.21-linux-x64`
+To generate textures for the Objaverse objects using the protocol from the [Text2Tex](https://arxiv.org/abs/2303.11396) paper, run the following command from the root directory:
 
-2) download and preprocess Objaverse objects
+1) Download Blender 3.3.21:
     ```.bash
-    ./bash/objaverse_data_processing.sh
+    bash scripts/download_blender.sh
     ```
-    This script will download the original .glb models from Objaverse dataset and converts them to .obj files, ready to work.
-    All data will be stored in `./objaverse_eval/objaverse_data/glbs` and `./objaverse_eval/objaverse_data/obj` folders.
+    This will download and extract **Blender** to `objaverse_eval/blender-3.3.21-linux-x64`.
 
-3) render ground truth objects
+2) To download and process the Objaverse subset:
     ```.bash
-    ./bash/render_gt_frames.sh
+    bash scripts/objaverse_data_processing.sh
     ```
-    To calculate final FID/KID metrics you will need to render with Blender ground truth glb files from Objaverse. After running this script all ground truth renders will be in `./objaverse_eval/renders/ground_truth/`.
+    This script downloads the original `.glb` models from the Objaverse dataset and converts them into clean `.obj` files ready for texturing.
 
-4) genearte texture for preprocessed objects
+    **Output locations:**
+    - Original files: `objaverse_eval/objaverse_data/glbs`
+    - Processed meshes: `objaverse_eval/objaverse_data/obj`
+
+3) To generate the reference images for metric (FID/KID) calculation:
     ```.bash
-    ./bash/run_objaverse_eval.sh
+    bash scripts/render_gt_frames.sh
     ```
-    Now you are ready to start benchmarking. This suggested script will launch training in several GPU in supercomputer SLURM system. You data will be stored in `./logs/objaverse_eval_{date}`.
+    This script renders the original (ground truth) `.glb` files from the Objaverse subset using Blender.
+    
+    **Output:** All ground truth renders will be saved in `objaverse_eval/renders/ground_truth/`.
+
+    *These renders are required to compute FID and KID scores.*
+
+4) To generate textures for the preprocessed objects:
+    ```.bash
+    bash scripts/run_objaverse_eval.sh
+    ```
+    This script launches the generation process. It is optimized for multi-GPU setups (e.g., SLURM clusters).
+
+    **Output:** Generated textures and logs will be saved in `logs/objaverse_eval_{date}`.
+
+    > **Verification:** You can quickly check if the generation finished correctly by running the sanity check script on the output folder:
+    > ```
+    > bash scripts/sanity_check.sh -d logs/objaverse_eval_{date} -ef 1 -ed 2 -esf 6
+    > ```
 
 6) render generated textures
     ```.bash
-    ./scripts/render_frames.sh ./logs/objaverse_eval_{date}/ ii objaverse_eval_{date}
+    scripts/render_frames.sh logs/objaverse_eval_{date}/ ii objaverse_eval_{date}
     ```
-    After training you need to render your trained textures from stage `ii` with Blender. All rendered data will be in `./objaverse_eval/renders/objaverse_eval_{date}/`. This command also render videos for future side-by-side comparision.
+    After training you need to render your trained textures from stage `ii` with Blender. All rendered data will be in `objaverse_eval/renders/objaverse_eval_{date}/`. This command also render videos for future side-by-side comparision.
 
 7) calculate FID/KID
     ```.bash
-    ./scripts/run_metrics.sh ./objaverse_eval/renders/objaverse_eval_{date}/frames/
+    scripts/run_metrics.sh objaverse_eval/renders/objaverse_eval_{date}/frames/
     ```
     After all preparations we finally can calculate FID/KID metrics. 
 
