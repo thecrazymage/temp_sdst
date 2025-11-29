@@ -42,7 +42,7 @@ If you are interested in collaborating, please reach out to us via [alievmishan7
 - [Setup Environment](#setup-environment)
 - [Quick Start](#quick-start)
 - [Benchmark on Objaverse subset](#benchmark-on-objaverse-subset)
-- [Acknowledgement](#???)
+- [Acknowledgement](#acknowledgement)
 - [Citation](#citation)
 - [License](#license)
 
@@ -52,11 +52,12 @@ See [environment.yml](environment.yml) for exact library dependencies. You can u
 
 ```.bash
 ./bash/setup_environment.sh
+conda activate castex
 ```
 
 ## Quick Start
 
-To make sure everything is set up and configured correctly, you can run the following script to generate texture for the Spot.
+To make sure everything is set up and configured correctly, you can run the following script to generate your first texture.
 
 ```.bash
 ./bash/run.sh
@@ -64,41 +65,43 @@ To make sure everything is set up and configured correctly, you can run the foll
 
 ## Benchmark on Objaverse subset
 
-To generate textures for the Objaverse objects as was proposed in Text2Tex paper, you need to run this commands from the root of your directory:
+To generate textures for the Objaverse objects as was proposed in [Text2Tex](https://arxiv.org/abs/2303.11396) paper, you need to run the next commands from the root of your directory:
 1) download Blender 3.3.21
-```.bash
-./bash/download_blender.sh
-```
+    ```.bash
+    ./bash/download_blender.sh
+    ```
+    It will be stored in `./objaverse_eval/blender-3.3.21-linux-x64`
 
-2) download and pre-process Objaverse objects
-```.bash
-./bash/objaverse_data_processing.sh
-```
+2) download and preprocess Objaverse objects
+    ```.bash
+    ./bash/objaverse_data_processing.sh
+    ```
+    This script will download the original .glb models from Objaverse dataset and converts them to .obj files, ready to work.
+    All data will be stored in `./objaverse_eval/objaverse_data/glbs` and `./objaverse_eval/objaverse_data/obj` folders.
 
 3) render ground truth objects
-```.bash
-pupupuou
-```
+    ```.bash
+    ./bash/render_gt_frames.sh
+    ```
+    To calculate final FID/KID metrics you will need to render with Blender ground truth glb files from Objaverse. After running this script all ground truth renders will be in `./objaverse_eval/renders/ground_truth/`.
 
 4) genearte texture for preprocessed objects
-```.bash
-pupupuou
-```
-
-5) genearte textures for preprocessed objects
-```.bash
-./bash/run_objaverse_eval.sh
-```
+    ```.bash
+    ./bash/run_objaverse_eval.sh
+    ```
+    Now you are ready to start benchmarking. This suggested script will launch training in several GPU in supercomputer SLURM system. You data will be stored in `./logs/objaverse_eval_{date}`.
 
 6) render generated textures
-```.bash
-pupupuou
-```
+    ```.bash
+    ./scripts/render_frames.sh ./logs/objaverse_eval_{date}/ ii objaverse_eval_{date}
+    ```
+    After training you need to render your trained textures from stage `ii` with Blender. All rendered data will be in `./objaverse_eval/renders/objaverse_eval_{date}/`. This command also render videos for future side-by-side comparision.
 
 7) calculate FID/KID
-```.bash
-pupupuou
-```
+    ```.bash
+    ./scripts/run_metrics.sh ./objaverse_eval/renders/objaverse_eval_{date}/frames/
+    ```
+    After all preparations we finally can calculate FID/KID metrics. 
 
 ## Acknowledgement
 
