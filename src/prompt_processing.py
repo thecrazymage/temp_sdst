@@ -52,6 +52,7 @@ def encode_prompt(prompt, directional=True, deepfloyd_model='DeepFloyd/IF-I-XL-v
         subfolder="text_encoder",
         load_in_8bit=True,
         variant="8bit",
+        device_map="auto"
     )
     pipe = DiffusionPipeline.from_pretrained(
         deepfloyd_model,
