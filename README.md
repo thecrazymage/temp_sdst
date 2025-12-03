@@ -50,8 +50,10 @@ Please refer to [environment.yml](environment.yml) for the complete list of depe
 git clone https://github.com/thecrazymage/CasTex.git
 cd CasTex
 
-bash scripts/setup_environment.sh
+module load Python CUDA/12.4 gnu10
+conda env create -f environment.yml -n castex
 conda activate castex
+pip install "git+https://github.com/facebookresearch/pytorch3d.git@V0.7.8" --no-build-isolation
 ```
 
 ## Quick Start
