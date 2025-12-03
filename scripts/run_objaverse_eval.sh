@@ -14,7 +14,7 @@ mkdir -p "$TEMP_RUN_DIR"
 mkdir -p "${TEMP_RUN_DIR}/scripts"
 mkdir -p "${TEMP_RUN_DIR}/tasks"
 
-BATCH_SIZE=52
+BATCH_SIZE=25
 BASE_DIR="./objaverse_eval/objaverse_data/obj"
 NUM_BATCHES=$(( (TOTAL_FOLDERS + BATCH_SIZE - 1) / BATCH_SIZE ))
 
@@ -75,7 +75,7 @@ for FOLDER in "\${FOLDERS[@]}"; do
         --use_dir_embeddings \
         --guidance_scale_i 15 \
         --guidance_scale_ii 10 \
-        --prompt_cache_dir "cached_prompts_fp16"
+        --prompt_cache_dir "cached_prompts"
 done
 rm -f "$BATCH_SCRIPT"
 EOT
