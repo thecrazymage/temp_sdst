@@ -1,6 +1,6 @@
 #!/bin/bash
 
-module load Python CUDA/11.7 gnu10
+module load Python CUDA/12.4 gnu10
 source deactivate
 conda activate castex
 
