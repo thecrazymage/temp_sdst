@@ -52,26 +52,12 @@ def encode_prompt(prompt, directional=True, deepfloyd_model='DeepFloyd/IF-I-XL-v
         subfolder="text_encoder",
         load_in_8bit=True,
         variant="8bit",
-        device_map="auto"
     )
     pipe = DiffusionPipeline.from_pretrained(
         deepfloyd_model,
         text_encoder=text_encoder,
         unet=None,
     )
-    # mishan: check for results from it
-    # text_encoder = T5EncoderModel.from_pretrained(
-    #     deepfloyd_model,
-    #     subfolder="text_encoder",
-    #     torch_dtype=torch.float16,
-    #     use_safetensors=True  
-    # ).to(device)
-    # pipe = DiffusionPipeline.from_pretrained(
-    #     deepfloyd_model,
-    #     text_encoder=text_encoder,
-    #     unet=None,
-    #     torch_dtype=torch.float16
-    # ).to(device)
 
     if directional:
         directions = ['front view', 'side view', 'backside view', 'top view', 'bottom view']
@@ -79,7 +65,8 @@ def encode_prompt(prompt, directional=True, deepfloyd_model='DeepFloyd/IF-I-XL-v
     else:
         prompts = [prompt]
 
-    prompt_embeddings = pipe.encode_prompt(prompts)
+    pipe = pipe.to(device)
+    prompt_embeddings = pipe.encode_prompt(prompts, device=device)
     torch.save(prompt_embeddings, embedding_path)
     
     return prompt_embeddings
