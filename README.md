@@ -16,6 +16,10 @@ This repository contains the official implementation of the WACV 2026 paper:
 <br>
 by [Aliev Mishan](https://scholar.google.com/citations?user=QJz42PEAAAAJ&hl=en), [Dmitry Baranchuk](https://scholar.google.com/citations?user=NiPmk8oAAAAJ&hl=en&oi=ao), [Kirill Struminsky](https://scholar.google.com/citations?hl=en&user=q69zIO0AAAAJ).
 
+<!-- Teaser: Используйте GIF или PNG хорошего разрешения -->
+<!-- Если есть картинка с коровами, назовите её docs/teaser_cows.png -->
+<!-- ![Teaser image](docs/teaser.png) -->
+
 ### Abstract
 
 This work investigates text-to-texture synthesis using diffusion models to generate physically-based texture maps.
@@ -30,9 +34,7 @@ In the experiments, we show that our approach significantly outperforms state-of
 
 For more details and results, please visit our [Project Page](https://thecrazymage.github.io/CasTex/).
 
-<!-- Teaser: Используйте GIF или PNG хорошего разрешения -->
-<!-- Если есть картинка с коровами, назовите её docs/teaser_cows.png -->
-<!-- ![Teaser image](docs/teaser.png) -->
+If you are interested in collaborating or have any questions, please reach out to us via [alievmishan78@gmail.com](mailto:alievmishan78@gmail.com).
 
 ## Table of Contents
 - [Installation](#installation)
@@ -140,9 +142,14 @@ To generate textures for the Objaverse objects using the protocol from the [Text
     ```
     This script compares the generated renders from `objaverse_eval/renders/eval_{date}/frames/` against the ground truth from `objaverse_eval/renders/ground_truth/frames` and outputs the FID and KID scores.
 
-## Acknowledgement
+## Acknowledgements
 
+We would like to thank the authors of the following open-source projects, upon which parts of this codebase are built:
+-   [Text2Tex](https://github.com/daveredrum/Text2Tex) for the data utility scripts used in our evaluation pipeline.
+-   [NVIDIA Kaolin](https://github.com/NVIDIAGameWorks/kaolin) for their 3D processing tools and rendering utilities.
+-   [pytorch-fid](https://github.com/mseitzer/pytorch-fid) and [gan-metrics-pytorch](https://github.com/abdulfatir/gan-metrics-pytorch) for the implementations of evaluation metrics.
 
+Please refer to the **License** section for detailed licensing information regarding these components.
 
 ## Citation
 
@@ -162,6 +169,7 @@ However, some parts of the code are adapted from third‑party projects and rema
 
 - **Text2Tex**: files in `objaverse_eval/objaverse_data_utils/` are based on [Text2Tex](https://github.com/daveredrum/Text2Tex) and are licensed under the **Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0)**. This implies that these parts are for non‑commercial use only and must be shared under the same license.
 - **Kaolin**: parts of the code in `src/third_party/kaolin/` are adapted from [NVIDIA Kaolin](https://github.com/NVIDIAGameWorks/kaolin), which is licensed under **Apache 2.0** and the **NVIDIA Source Code License**.
+- **Metrics**: files in `objaverse_eval/metrics/` are based on [pytorch-fid](https://github.com/mseitzer/pytorch-fid) and [gan-metrics-pytorch](https://github.com/abdulfatir/gan-metrics-pytorch), both licensed under **Apache 2.0**.
 
 Please make sure to comply with these third‑party licenses, especially if you plan to use this code in commercial projects.
 
