@@ -157,8 +157,13 @@ To generate textures for the Objaverse objects using the protocol from the [Text
 
 ## License
 
-The content of lectures and assignments is distributed under the [Apache 2.0](./LICENSE) license: you can use and redistribute it for any purposes, as long as you refer to this course as the origin of the content.
+The original content of this repository is licensed under the [Apache License 2.0](./LICENSE).  
+However, some parts of the code are adapted from third‑party projects and remain under their original licenses:
 
+- **Text2Tex**: files in `objaverse_eval/objaverse_data_utils/` are based on [Text2Tex](https://github.com/daveredrum/Text2Tex) and are licensed under the **Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0)**. This implies that these parts are for non‑commercial use only and must be shared under the same license.
+- **Kaolin**: parts of the code in `src/third_party/kaolin/` are adapted from [NVIDIA Kaolin](https://github.com/NVIDIAGameWorks/kaolin), which is licensed under **Apache 2.0** and the **NVIDIA Source Code License** for some modules.
+
+Please make sure to comply with these third‑party licenses, especially if you plan to use this code in commercial projects.
 
 
 <!-- ## Draft
