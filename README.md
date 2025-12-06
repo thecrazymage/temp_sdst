@@ -2,7 +2,7 @@
 [![arXiv](https://img.shields.io/badge/arXiv-2510.17699-b31b1b.svg)](https://arxiv.org/abs/2510.17699)
 [![Project Page](https://img.shields.io/badge/Project-Page-Green)](https://thecrazymage.github.io/CasTex/)
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://thecrazymage.github.io/CasTex/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-Apache_2.0-purple.svg)](LICENSE)
 
 <div align="center">
   <h3><span style="color:green">🎉 Accepted to WACV 2026 🎉</span></h3>
@@ -161,7 +161,7 @@ The original content of this repository is licensed under the [Apache License 2.
 However, some parts of the code are adapted from third‑party projects and remain under their original licenses:
 
 - **Text2Tex**: files in `objaverse_eval/objaverse_data_utils/` are based on [Text2Tex](https://github.com/daveredrum/Text2Tex) and are licensed under the **Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0)**. This implies that these parts are for non‑commercial use only and must be shared under the same license.
-- **Kaolin**: parts of the code in `src/third_party/kaolin/` are adapted from [NVIDIA Kaolin](https://github.com/NVIDIAGameWorks/kaolin), which is licensed under **Apache 2.0** and the **NVIDIA Source Code License** for some modules.
+- **Kaolin**: parts of the code in `src/third_party/kaolin/` are adapted from [NVIDIA Kaolin](https://github.com/NVIDIAGameWorks/kaolin), which is licensed under **Apache 2.0** and the **NVIDIA Source Code License**.
 
 Please make sure to comply with these third‑party licenses, especially if you plan to use this code in commercial projects.
 
