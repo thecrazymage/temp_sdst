@@ -50,4 +50,8 @@ for folder in "$DIR"/*; do
     [[ $issue -eq 1 ]] && basename "$folder" && GLOBAL_ISSUE=1
 done
 
-[[ $GLOBAL_ISSUE -eq 0 ]] && echo "All checks passed!"
+if [[ $GLOBAL_ISSUE -eq 0 ]]; then
+    echo -e "\n\n\033[1;32m✓ Everything was rendered correctly! All checks passed!\033[0m\n\n"
+else
+    echo -e "\n\n\033[1;31m✗ Some checks failed: NOT everything was rendered correctly. Review output above.\033[0m\n\n"
+fi
