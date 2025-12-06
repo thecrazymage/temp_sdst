@@ -41,7 +41,7 @@ render_models() {
         local obj_file=$(find "$stage_dir" -maxdepth 1 -type f -name "*.obj" | head -n 1)
 
         if [ -z "$obj_file" ]; then
-            echo "Error: No .obj or .glb file found in $stage_dir. Skipping." >&2
+            echo "Error: No .obj file found in $stage_dir. Skipping." >&2
             continue
         fi
 
@@ -83,9 +83,11 @@ traverse_directories_and_compile_gifs() {
 
 echo "Step 1: Rendering frames for FID (frames)..."
 render_models "$INPUT_ROOT_DIR" "$OUTPUT_DIR" "$STAGE" "frames"
+bash scripts/sanity_check.sh -d "$OUTPUT_DIR/frames" -ef 20 -ed 0 -esf 0
 
 echo "Step 2: Rendering frames for video (video)..."
 render_models "$INPUT_ROOT_DIR" "$OUTPUT_DIR" "$STAGE" "video"
+bash scripts/sanity_check.sh -d "$OUTPUT_DIR/video" -ef 60 -ed 0 -esf 0
 
 echo "Step 3: Compiling videos..."
 traverse_directories_and_compile_gifs "${OUTPUT_DIR}/video" "${OUTPUT_DIR}/mp4"
