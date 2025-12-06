@@ -66,7 +66,7 @@ def encode_prompt(prompt, directional=True, deepfloyd_model='DeepFloyd/IF-I-XL-v
         prompts = [prompt]
 
     pipe = pipe.to(device)
-    prompt_embeddings = pipe.encode_prompt(prompts, device=device)
+    prompt_embeddings = pipe.encode_prompt(prompts)
     torch.save(prompt_embeddings, embedding_path)
     
     return prompt_embeddings
