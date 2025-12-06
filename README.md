@@ -144,12 +144,13 @@ To generate textures for the Objaverse objects using the protocol from the [Text
 
 ## Acknowledgements
 
-We would like to thank the authors of the following open-source projects, upon which parts of this codebase are built:
+We would like to thank the authors of the following open-source projects and tools:
 -   [Text2Tex](https://github.com/daveredrum/Text2Tex) for the data utility scripts used in our evaluation pipeline.
 -   [NVIDIA Kaolin](https://github.com/NVIDIAGameWorks/kaolin) for their 3D processing tools and rendering utilities.
 -   [pytorch-fid](https://github.com/mseitzer/pytorch-fid) and [gan-metrics-pytorch](https://github.com/abdulfatir/gan-metrics-pytorch) for the implementations of evaluation metrics.
+-   [Blender](https://www.blender.org/) for the amazing open-source 3D creation suite used for visualization.
 
-Please refer to the **License** section for detailed licensing information regarding these components.
+Please refer to the **License** section for detailed licensing information regarding the code components.
 
 We also thank [`Ksenia Ushatskaya`](https://t.me/scushaus) for visualizing the generated textures on the `assets/spot.obj` model used in the paper teaser. Special thanks go to [`Maxim Kodryan`](https://scholar.google.com/citations?user=BGVWciMAAAAJ&hl=en) — his mere existence was contribution enough.
 
