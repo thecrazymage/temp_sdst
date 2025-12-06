@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 <div align="center">
-  <img src="https://img.shields.io/badge/🎉_Accepted_to_WACV_2026_🎉-2ea44f?style=for-the-badge&labelColor=2ea44f" alt="Accepted to WACV 2026"/>
+  <h3><span style="color:green">🎉 Accepted to WACV 2026 🎉</span></h3>
 </div>
 
 <br>
@@ -142,6 +142,8 @@ To generate textures for the Objaverse objects using the protocol from the [Text
 
 ## Acknowledgement
 
+
+
 ## Citation
 
 ```bibtex
@@ -153,8 +155,9 @@ To generate textures for the Objaverse objects using the protocol from the [Text
 }
 ```
 
-
 ## License
+
+The content of lectures and assignments is distributed under the [Apache 2.0](./LICENSE) license: you can use and redistribute it for any purposes, as long as you refer to this course as the origin of the content.
 
 
 
