@@ -151,6 +151,8 @@ We would like to thank the authors of the following open-source projects, upon w
 
 Please refer to the **License** section for detailed licensing information regarding these components.
 
+We also thank [`Ksenia Ushatskaya`](https://t.me/scushaus) for visualizing the generated textures on the `assets/spot.obj` model used in the paper teaser. Special thanks go to [`Maxim Kodryan`](https://scholar.google.com/citations?user=BGVWciMAAAAJ&hl=en) — his mere existence was contribution enough.
+
 ## Citation
 
 ```bibtex
