@@ -189,7 +189,7 @@ def load_object(object_path: str) -> None:
         import_function(filepath=object_path)
 
     if file_extension == 'obj':
-        mesh_to_render = bpy.context.scene.objects['mesh']
+        mesh_to_render = bpy.context.selected_objects[0]
         material = mesh_to_render.data.materials[0]
         dirname = os.path.dirname(os.path.realpath(object_path))
         # roughness
