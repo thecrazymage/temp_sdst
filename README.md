@@ -96,13 +96,6 @@ To generate textures for the Objaverse objects using the protocol from the [Text
 
     *These renders are required to compute FID and KID scores.*
 
-    > **Verification:**
-    >
-    > To ensure that the all generation process completed successfully, run the sanity check on the output folder:
-    > ```
-    > bash scripts/sanity_check.sh -d objaverse_eval/renders/ground_truth/frames -ef 20 -ed 0 -esf 0
-    > ```
-
 4) To generate textures for the preprocessed objects:
     ```.bash
     bash scripts/run_objaverse_eval.sh
@@ -128,13 +121,6 @@ To generate textures for the Objaverse objects using the protocol from the [Text
     **Output:**
     - Rendered images will be stored in `objaverse_eval/renders/eval_{date}/frames`.
     - This step also produces 360° videos for qualitative comparison in `objaverse_eval/renders/eval_{date}/mp4`.
-
-    > **Verification:**
-    >
-    > To ensure that the all generation process completed successfully, run the sanity check on the output folder:
-    > ```.bash
-    > bash scripts/sanity_check.sh -d objaverse_eval/renders/eval_{date}/frames -ef 20 -ed 0 -esf 0
-    > ```
 
 6) To calculate FID and KID:
     ```.bash
