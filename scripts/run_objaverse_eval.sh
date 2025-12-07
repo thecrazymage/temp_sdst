@@ -4,7 +4,7 @@ FOLDERS_FILE="./objaverse_eval/assets/objaverse_subset.txt"
 TOTAL_FOLDERS=$(grep -c . "$FOLDERS_FILE")
 
 START_TIME=$(date +%d-%m-%Y_%H-%M-%S)
-RUN_NAME="objaverse_eval_${START_TIME}"
+RUN_NAME="objaverse_eval_${START_TIME}_XL_L_paintit"
 
 LOGS_DIR="./logs/$RUN_NAME"
 mkdir -p "$LOGS_DIR"
@@ -14,7 +14,7 @@ mkdir -p "$TEMP_RUN_DIR"
 mkdir -p "${TEMP_RUN_DIR}/scripts"
 mkdir -p "${TEMP_RUN_DIR}/tasks"
 
-BATCH_SIZE=25
+BATCH_SIZE=30
 BASE_DIR="./objaverse_eval/objaverse_data/obj"
 NUM_BATCHES=$(( (TOTAL_FOLDERS + BATCH_SIZE - 1) / BATCH_SIZE ))
 
@@ -74,8 +74,7 @@ for FOLDER in "\${FOLDERS[@]}"; do
         --num_steps_ii 1000 \
         --use_dir_embeddings \
         --guidance_scale_i 15 \
-        --guidance_scale_ii 10 \
-        --prompt_cache_dir "cached_prompts"
+        --guidance_scale_ii 10
 done
 rm -f "$BATCH_SCRIPT"
 EOT
