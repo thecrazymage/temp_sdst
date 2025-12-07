@@ -16,13 +16,7 @@ This repository contains the official implementation of the WACV 2026 paper:
 <br>
 by [Aliev Mishan](https://scholar.google.com/citations?user=QJz42PEAAAAJ&hl=en), [Dmitry Baranchuk](https://scholar.google.com/citations?user=NiPmk8oAAAAJ&hl=en&oi=ao), [Kirill Struminsky](https://scholar.google.com/citations?hl=en&user=q69zIO0AAAAJ).
 
-<!-- Teaser: Используйте GIF или PNG хорошего разрешения -->
-<!-- Если есть картинка с коровами, назовите её docs/teaser_cows.png -->
 ![Teaser image 1](docs/teaser_1.png)
-
-<!-- <p align="center">
-  <img src="docs/teaser.001.jpg" width="100%" alt="Teaser image">
-</p> -->
 
 ### Abstract
 
@@ -168,6 +162,9 @@ However, some parts of the code are adapted from third‑party projects and rema
 
 Please make sure to comply with these third‑party licenses, especially if you plan to use this code in commercial projects.
 
+<p align="center">
+  <img src="docs/teaser_small.gif" alt="Teaser gif">
+</p>
 
 <!-- ## Draft
 Credits:
