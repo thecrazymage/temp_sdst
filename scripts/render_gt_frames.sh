@@ -1,10 +1,10 @@
 #!/bin/bash
 
-BLENDER_PATH="./objaverse_eval/blender-3.3.21-linux-x64/blender"
-PYTHON_SCRIPT_PATH="./objaverse_eval/render_utils/blender_script.py"
-DATA_PATH="./objaverse_eval/objaverse_data/glbs"
-OUTPUT_DIR="./objaverse_eval/renders/ground_truth/"
-ENV_MAP_PATH="./objaverse_eval/assets/studio_small_06_2k.hdr"
+BLENDER_PATH="objaverse_eval/blender-3.3.21-linux-x64/blender"
+PYTHON_SCRIPT_PATH="objaverse_eval/render_utils/blender_script.py"
+DATA_PATH="objaverse_eval/objaverse_data/glbs"
+OUTPUT_DIR="objaverse_eval/renders/ground_truth/"
+ENV_MAP_PATH="objaverse_eval/assets/studio_small_06_2k.hdr"
 
 # Function to process meshes
 process_mesh() {
@@ -31,3 +31,5 @@ find "$DATA_PATH" -type f -name "*.glb" | while IFS= read -r file; do
     echo "Processing file $file..."
     process_mesh "$file"
 done
+
+bash scripts/sanity_check.sh -d "$OUTPUT_DIR/frames" -ef 20 -ed 0 -esf 0
