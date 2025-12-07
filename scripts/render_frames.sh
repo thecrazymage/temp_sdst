@@ -3,11 +3,11 @@
 source deactivate
 conda activate castex
 
-BLENDER_PATH="./objaverse_eval/blender-3.3.21-linux-x64/blender"
-PYTHON_SCRIPT_PATH="./objaverse_eval/render_utils/blender_script.py"
-PATH_TO_BACKGROUND_IMAGE="./objaverse_eval/assets/background.png"
-ENV_MAP_PATH="./objaverse_eval/assets/studio_small_06_2k.hdr"
-BASE_OUTPUT_ROOT="./objaverse_eval/renders"
+BLENDER_PATH="objaverse_eval/blender-3.3.21-linux-x64/blender"
+PYTHON_SCRIPT_PATH="objaverse_eval/render_utils/blender_script.py"
+PATH_TO_BACKGROUND_IMAGE="objaverse_eval/assets/background.png"
+ENV_MAP_PATH="objaverse_eval/assets/studio_small_06_2k.hdr"
+BASE_OUTPUT_ROOT="objaverse_eval/renders"
 
 if (( $# < 2 )); then
     echo "Usage: bash render_frames.sh <input_folder> <stage> [custom_output_name]"
@@ -91,5 +91,10 @@ bash scripts/sanity_check.sh -d "$OUTPUT_DIR/video" -ef 60 -ed 0 -esf 0
 
 echo "Step 3: Compiling videos..."
 traverse_directories_and_compile_gifs "${OUTPUT_DIR}/video" "${OUTPUT_DIR}/mp4"
+if [ $(find "${OUTPUT_DIR}/mp4" -maxdepth 1 -name "*.mp4" | wc -l) -eq 410 ]; then
+    echo -e "\n\n\033[1;32m✓ All videos successfully compiled! (410 files)\033[0m\n\n"
+else
+    echo -e "\n\n\033[1;31m✗ Video compilation issue: Number of files is not equal to 410\033[0m\n\n"
+fi
 
 echo "Done!"
