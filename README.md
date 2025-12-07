@@ -162,10 +162,6 @@ However, some parts of the code are adapted from third‑party projects and rema
 
 Please make sure to comply with these third‑party licenses, especially if you plan to use this code in commercial projects.
 
-<p align="center">
-  <img src="docs/teaser_small.gif" alt="Teaser gif">
-</p>
-
 <!-- ## Draft
 Credits:
 This project includes code adapted from the NVIDIA Kaolin library (Apache 2.0 License).
