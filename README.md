@@ -18,7 +18,7 @@ by [Aliev Mishan](https://scholar.google.com/citations?user=QJz42PEAAAAJ&hl=en),
 
 <!-- Teaser: Используйте GIF или PNG хорошего разрешения -->
 <!-- Если есть картинка с коровами, назовите её docs/teaser_cows.png -->
-![image](docs/teaser.png)
+![Teaser image 1](docs/teaser_1.png)
 
 <!-- <p align="center">
   <img src="docs/teaser.001.jpg" width="100%" alt="Teaser image">
@@ -39,6 +39,8 @@ In the experiments, we show that our approach significantly outperforms state-of
 For more details and results, please visit our [Project Page](https://thecrazymage.github.io/CasTex/).
 
 If you are interested in collaborating or have any questions, please reach out to us via [alievmishan78@gmail.com](mailto:alievmishan78@gmail.com).
+
+![Teaser image 2](docs/teaser_2.png)
 
 ## Table of Contents
 - [Installation](#installation)
