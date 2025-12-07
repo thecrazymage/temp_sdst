@@ -21,7 +21,7 @@ by [Aliev Mishan](https://scholar.google.com/citations?user=QJz42PEAAAAJ&hl=en),
 <!-- ![Teaser image](docs/teaser.png) -->
 
 <p align="center">
-  <img src="docs/teaser.png" width="100%" alt="Teaser image">
+  <img src="docs/teaser.001.png" width="100%" alt="Teaser image">
 </p>
 
 ### Abstract
