@@ -18,11 +18,11 @@ by [Aliev Mishan](https://scholar.google.com/citations?user=QJz42PEAAAAJ&hl=en),
 
 <!-- Teaser: Используйте GIF или PNG хорошего разрешения -->
 <!-- Если есть картинка с коровами, назовите её docs/teaser_cows.png -->
-<!-- ![Teaser image](docs/teaser.png) -->
+![Teaser image](docs/teaser.png)
 
-<p align="center">
+<!-- <p align="center">
   <img src="docs/teaser.001.jpg" width="100%" alt="Teaser image">
-</p>
+</p> -->
 
 ### Abstract
 
