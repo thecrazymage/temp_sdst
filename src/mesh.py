@@ -6,19 +6,23 @@ import xatlas
 import numpy as np
 from src.third_party.kaolin import import_mesh, center_points, PBRMaterial, SurfaceMesh
 
-def load_mesh(filename, pbr_material_parameters, bsdf_path='assets/bsdf_256_256.bin', device="cuda:0"):
-    # only for obj files
-    mesh = import_mesh(filename, with_materials=False).to(device=device)
+def load_mesh(filename, pbr_material_parameters, use_predefined_texture=False, bsdf_path='assets/bsdf_256_256.bin', device="cuda:0"):
+
+    mesh = import_mesh(filename, with_materials=use_predefined_texture).to(device=device)
     mesh.vertices = 2 * center_points(
         mesh.vertices.unsqueeze(0), normalize=True
     ).squeeze(0)
     
-    vmapping, indices, uvs = xatlas.parametrize(
-        mesh.vertices.cpu(),
-        mesh.faces.cpu(),
-    )
-    uvs = torch.tensor(uvs, device=device)
-    indices = torch.tensor(indices.astype(np.int64), dtype=torch.long, device=device)
+    if use_predefined_texture:
+        uvs = mesh.uvs
+        indices = mesh.face_uvs_idx
+    else:
+        vmapping, indices, uvs = xatlas.parametrize(
+            mesh.vertices.cpu(),
+            mesh.faces.cpu(),
+        )
+        uvs = torch.tensor(uvs, device=device)
+        indices = torch.tensor(indices.astype(np.int64), dtype=torch.long, device=device)
 
     my_material = PBRMaterial(
         **pbr_material_parameters,

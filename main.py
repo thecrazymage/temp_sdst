@@ -1,5 +1,6 @@
 import os
 import gc
+import cv2
 import time
 import yaml
 import torch
@@ -48,10 +49,13 @@ def parse_args():
     
     # ========== Rendering & Material ==========
     render_group = parser.add_argument_group('Rendering & Material')
-    render_group.add_argument('--texture_dim', type=int,   default=1024,                                         help='Texture resolution')
-    render_group.add_argument('--env_light',   type=str,   default='assets/kloofendal_28d_misty_puresky_2k.hdr', help='Path to HDR environment map for lighting')
-    render_group.add_argument('--light_scale', type=float, default=2.0,                                          help='Multiplier for environment light intensity')
-    
+    render_group.add_argument('--texture_dim',          type=int,   default=1024,                                         help='Texture resolution')
+    render_group.add_argument('--env_light',            type=str,   default='assets/kloofendal_28d_misty_puresky_2k.hdr', help='Path to HDR environment map for lighting')
+    render_group.add_argument('--light_scale',          type=float, default=2.0,                                          help='Multiplier for environment light intensity')
+    render_group.add_argument('--diffuse_texture_path', type=str,   default=None,                                         help='Ready diffuse map for initialization')
+    render_group.add_argument('--no_diffuse_learning',  action='store_true',                                              help='Train diffuse map or not')
+    render_group.add_argument('--diffuse_only',         action='store_true',                                              help='Train only diffuse map')
+
     # ========== Optimizer ==========
     optim_group = parser.add_argument_group('Optimizer Adam')
     optim_group.add_argument('--lr_i',            type=float, default=0.01, help='Learning rate for stage I')
@@ -99,11 +103,17 @@ def main():
         device=args.device
     )
     
-    print("Initializing textures...")    
-    texture = init_texture(args.texture_dim)
+    print("Initializing textures...")
+    texture = init_texture(
+        texture_dim=args.texture_dim, 
+        diffuse_only=args.diffuse_only, 
+        device=args.device,
+        diffuse_path=args.diffuse_texture_path,
+        no_diffuse_learning=args.no_diffuse_learning
+    )
     
     print("Loading mesh...")
-    mesh = load_mesh(args.mesh_location, texture)
+    mesh = load_mesh(args.mesh_location, texture, use_predefined_texture=True if args.diffuse_texture_path else False)
 
     print("Loading renderer...")
     renderer = Renderer()
