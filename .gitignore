@@ -8,3 +8,4 @@ objaverse_eval/renders
 objaverse_eval/assets/pt_inception-2015-12-05-6726825d.pth
 *.requirements.txt 
 objaverse_eval/temp_objaverse_cache
+.DS_Store
