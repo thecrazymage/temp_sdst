@@ -128,6 +128,8 @@ To generate textures for the Objaverse objects using the protocol from the [Text
     ```
     This script compares the generated renders from `objaverse_eval/renders/eval_{date}/frames/` against the ground truth from `objaverse_eval/renders/ground_truth/frames` and outputs the FID and KID scores.
 
+    > **Note:** The computed metrics may slightly differ from the numbers reported in the paper due to variations in hardware and inherent randomness in the generation process. However, the overall trend and relative performance should remain consistent.
+
 ## Acknowledgements
 
 We would like to thank the authors of the following open-source projects and tools:
