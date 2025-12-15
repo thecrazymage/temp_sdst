@@ -104,9 +104,7 @@ To generate textures for the Objaverse objects using the protocol from the [Text
 
     **Output:** Generated textures and logs will be saved in `logs/objaverse_eval_{date}`.
 
-    > **Verification:**
-    >
-    > To ensure that the all generation process completed successfully, run the sanity check on the output folder:
+    > **Verification:** To ensure that the all generation process completed successfully, run the sanity check on the output folder:
     > ```
     > bash scripts/sanity_check.sh -d logs/objaverse_eval_{date} -ef 1 -ed 2 -esf 6
     > ```
@@ -163,17 +161,3 @@ However, some parts of the code are adapted from third‑party projects and rema
 - **Metrics**: files in `objaverse_eval/metrics/` are based on [pytorch-fid](https://github.com/mseitzer/pytorch-fid) and [gan-metrics-pytorch](https://github.com/abdulfatir/gan-metrics-pytorch), both licensed under **Apache 2.0**.
 
 Please make sure to comply with these third‑party licenses, especially if you plan to use this code in commercial projects.
-
-<!-- ## Draft
-Credits:
-This project includes code adapted from the NVIDIA Kaolin library (Apache 2.0 License).
-
-
-Пример скрипта:
-./scripts/sanity_check.sh -d ./logs/objaverse_eval_26-11-2025_00-00-40/ -ef 1 -ed 2 -esf 6
-
-./scripts/render_frames.sh ./logs/test/ ii test
-
-./scripts/run_metrics.sh ./objaverse_eval/renders/ours_2025_07_15_XL_L/frames/
-
-Parts of the code in `metrics/` (specifically FID calculation) are adapted from [pytorch-fid](https://github.com/mseitzer/pytorch-fid) by Maximilian Seitzer. -->
