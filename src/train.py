@@ -162,7 +162,7 @@ class Trainer:
                     self.texture[key].data[..., d].clamp_(*clamp_range_d)
 
     def training_step(self, timestep):
-        """Implements single training step."""
+        """Executes single training step."""
         iter_frac = timestep / self.num_training_steps
         t_min = self._compute_adaptive_timestep(DEFAULT_T_MIN_START, DEFAULT_T_MIN_END, iter_frac)
         t_max = self._compute_adaptive_timestep(DEFAULT_T_MAX_START, DEFAULT_T_MAX_END, iter_frac)
