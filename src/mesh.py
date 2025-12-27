@@ -7,7 +7,7 @@ import numpy as np
 from src.third_party.kaolin import import_mesh, center_points, PBRMaterial, SurfaceMesh
 
 def load_mesh(filename, pbr_material_parameters, use_predefined_texture=False, bsdf_path='assets/bsdf_256_256.bin', device="cuda:0"):
-
+    """Loads a mesh from a file, optionally with predefined textures, and prepares UVs and materials."""
     mesh = import_mesh(filename, with_materials=use_predefined_texture).to(device=device)
     mesh.vertices = 2 * center_points(
         mesh.vertices.unsqueeze(0), normalize=True
@@ -43,6 +43,7 @@ def load_mesh(filename, pbr_material_parameters, use_predefined_texture=False, b
     )
 
 def copy_mesh(mesh, texture):
+    """Creates a copy of a mesh with a cloned texture and corresponding material LUT."""
     texture_clone = {key: texture[key].detach().clone() for key in texture.keys()}
     my_material = PBRMaterial(
         **texture_clone,
@@ -54,6 +55,10 @@ def copy_mesh(mesh, texture):
     return new_mesh
 
 def write_obj(folder, mesh, material):
+    """
+        Exports a mesh to OBJ/MTL format, writing vertices, normals, texture coordinates, faces,
+        and material associations.
+    """
     obj_file = os.path.join(folder, 'mesh.obj')
     print("Writing mesh: ", obj_file)
     with open(obj_file, "w") as f:
@@ -104,6 +109,7 @@ def write_obj(folder, mesh, material):
     print("Done exporting mesh")
 
 def save_image(fn, x : np.ndarray):
+    """Saves an image array to disk, with basic clamping/format handling."""
     try:        
         x = np.clip(np.rint(x * 255.0), 0, 255).astype(np.uint8)
         if x.shape[-1] == 3:
@@ -114,6 +120,7 @@ def save_image(fn, x : np.ndarray):
 
 @torch.no_grad()
 def save_mtl(fn, material):
+    """Writes a simple MTL file and associated texture maps to disk."""
     folder = os.path.dirname(fn)     
     with open(fn, "w") as f:
         f.write('newmtl defaultMat\n')                                                               
