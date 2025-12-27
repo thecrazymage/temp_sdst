@@ -4,9 +4,14 @@ import nvdiffrast.torch as dr
 
 class Renderer:
     def __init__(self):
+        """Initializes the CUDA rasterization context for rendering."""
         self.glctx = dr.RasterizeCudaContext()
     
     def _interpolate_attributes(self, rast_out, rast_out_db, mesh):
+        """
+            Interpolates vertex attributes like normals, tangents, and UV coordinates 
+            across the rasterized face fragments.
+        """
         normals = nvdiffrast.torch.interpolate(
             mesh.get_or_compute_attribute('vertex_normals', should_cache=False),
             rast_out,
@@ -33,6 +38,7 @@ class Renderer:
         return normals, tangents, bitangents, texc, texd
 
     def _get_ray_dirs(self, camera, device='cuda:0'):
+        """Computes the direction vectors for rays passing through each pixel of the camera."""
         num_cameras = len(camera)
         pixel_y, pixel_x = torch.meshgrid(
             torch.arange(camera.height, device=device),
@@ -58,6 +64,10 @@ class Renderer:
         return ray_dir
 
     def render(self, mesh, camera, light, random_background=True, val_background=False, device='cuda:0'):
+        """
+            Executes the full rendering pipeline, including vertex transformation, rasterization, 
+            attribute interpolation, texture mapping, and PBR shading to produce the final image.
+        """
         # transform mesh
         vertices_camera = camera.extrinsics.transform(mesh.vertices)
         vertices_clip = camera.intrinsics.project(vertices_camera)
@@ -82,6 +92,10 @@ class Renderer:
         material = mesh.materials[0]
 
         def _proc_channel(texture_image):
+            """
+                Samples a specific texture map using linear mipmap filtering 
+                based on the interpolated UV coordinates.
+            """
             if texture_image is None:
                 return None
             return nvdiffrast.torch.texture(
