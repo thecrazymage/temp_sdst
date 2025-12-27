@@ -4,22 +4,21 @@ from transformers import T5EncoderModel
 from diffusers import DiffusionPipeline
 
 def get_prompt_filename(prompt, directional=True):
+    """Generates a standardized filename for caching text embeddings based on the prompt content."""
     if directional:
         return f'directional_embeddings_{prompt.replace(" ", "_")}.pt'
     else:
         return f'embeddings_{prompt.replace(" ", "_")}.pt'
 
 def get_view_direction(thetas, phis):
-    '''
-    Classifies camera positions into different views:
-    0 - front view, 1 - side view, 2 - backside view, 3 - top view, 4 - bottom view
-
-    Front view: phi in [pi/4, 3pi/4]
-    Backside view: phi in [5pi/4, 7pi/4]
-    Side view: phi in (-pi/4, pi/4) or (3pi/4, 5pi/4)
-    Top view: theta in [pi/4, 3pi/4]
-    Bottom view: theta in [5pi/4, 7pi/4]
-    '''
+    """
+        Classifies camera positions into different views:
+        0 - front view: phi in [pi/4, 3pi/4], 
+        1 - side view: phi in (-pi/4, pi/4) or (3pi/4, 5pi/4), 
+        2 - backside view: phi in [5pi/4, 7pi/4], 
+        3 - top view: theta in [pi/4, 3pi/4], 
+        4 - bottom view: theta in [5pi/4, 7pi/4]
+    """
     res = torch.zeros(thetas.shape[0], dtype=torch.long)
     phis = phis % (2 * torch.pi)
     thetas = thetas % (2 * torch.pi)
@@ -39,7 +38,10 @@ def get_view_direction(thetas, phis):
     return res
 
 def encode_prompt(prompt, directional=True, deepfloyd_model='DeepFloyd/IF-I-XL-v1.0', cache_dir='cached_prompts', device='cuda:0'):
-
+    """
+        Generates and caches text embeddings from a prompt using a T5 encoder, 
+        optionally creating view-dependent variations.
+    """
     cache_path = Path(cache_dir)
     cache_path.mkdir(exist_ok=True)
     
