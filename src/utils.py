@@ -8,17 +8,22 @@ from torchvision import transforms
 from torch.nn import Parameter, ParameterDict
 
 def flush():
+    """Forces garbage collection and clears the CUDA memory cache."""
     gc.collect()
     torch.cuda.empty_cache()
 
 def seed_all(seed):
+    """Sets random seeds for Python, NumPy, and PyTorch to ensure reproducible results."""
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
 
 def init_texture(texture_dim, diffuse_only=False, device='cuda:0', diffuse_path=None, no_diffuse_learning=False):
-
+    """
+        Creates and initializes the learnable texture parameters (diffuse, normal, metallic, roughness), 
+        optionally loading an initial image.
+    """
     if diffuse_path:
         diffuse_image = cv2.resize(
             cv2.cvtColor(cv2.imread(diffuse_path), cv2.COLOR_RGB2BGR), 
@@ -51,6 +56,7 @@ def init_texture(texture_dim, diffuse_only=False, device='cuda:0', diffuse_path=
     return material_parameters
 
 def save_texture(experiment_path, texture, stage):
+    """Saves the current state of the texture tensors to disk."""
     save_dir = os.path.join(experiment_path, f'model_stage_{stage}')
     os.makedirs(save_dir, exist_ok=True)
     torch.save(texture, os.path.join(save_dir, f'texture_stage_{stage}.pt'))
