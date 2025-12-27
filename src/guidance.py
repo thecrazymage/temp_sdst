@@ -11,6 +11,7 @@ class SDSLoss(torch.nn.Module):
         max_timestamp=900,
         device='cuda:0'
     ):
+        """Initializes the diffusion model pipeline, scheduler, and UNet for the specific training stage."""
         super().__init__()
 
         self.stage = stage
@@ -34,6 +35,7 @@ class SDSLoss(torch.nn.Module):
 
     @torch.amp.autocast('cuda', enabled=False)
     def forward_unet(self, latents, t, encoder_hidden_states, **kwargs):
+        """Executes a forward pass of the UNet model with mixed-precision handling."""
         return self.unet(
             latents.to(torch.float16),
             t.to(torch.float16),
@@ -42,6 +44,7 @@ class SDSLoss(torch.nn.Module):
         ).sample.to(latents.dtype)
 
     def prepare_latents(self, images):
+        """Resizes and normalizes input rendered images to match the diffusion model's expected latent format."""
         latents = F.interpolate(
             images,
             self.resolution,
@@ -52,7 +55,10 @@ class SDSLoss(torch.nn.Module):
         return 2.0 * latents - 1.0
     
     def prepare_condition(self, images, lowres_noise_level):
-        """ Only for stage ii """
+        """
+            Processes conditioning images for the second stage 
+            by performing downscaling, upscaling, and noise injection.
+        """
         downscaled = F.interpolate(images, (64, 64), mode="nearest")
         upscaled = F.interpolate(downscaled, (256, 256), mode="nearest")
         upscaled = 2.0 * upscaled - 1.0
@@ -64,7 +70,10 @@ class SDSLoss(torch.nn.Module):
         return upscaled
 
     def predict_noise(self, latents_noisy, t, prompt_embeddings, guidance_scale, condition, lowres_noise_level):
-
+        """
+            Predicts the noise residual for the latents 
+            using the diffusion model and applies classifier-free guidance.
+        """
         batch_size = latents_noisy.shape[0]
 
         kwargs = {}
@@ -98,7 +107,7 @@ class SDSLoss(torch.nn.Module):
         return noise_pred
 
     def get_denoised_latents(self, latents_noisy, noise_pred, t, clip=True):
-        """ x0 = (x_t - sqrt(1 - alpha_t) * noise) / sqrt(alpha_t) """
+        """Estimates the clean, original latent image from the noisy input and predicted noise."""
         alpha_t = self.alphas[t]
         beta_t = 1 - alpha_t
         x0 = (latents_noisy - noise_pred * beta_t.sqrt()) / alpha_t.sqrt()
@@ -114,6 +123,10 @@ class SDSLoss(torch.nn.Module):
         guidance_scale=15.0,
         lowres_noise_level=0.5,  # for stage ii
     ):
+        """
+            Computes the Score Distillation Sampling (SDS) loss by driving the rendered image 
+            towards the text prompt using the diffusion model's gradients.
+        """
         batch_size = images.shape[0]
 
         latents = self.prepare_latents(images)
