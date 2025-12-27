@@ -28,6 +28,10 @@ class Trainer:
         stage, 
         config,
     ):
+    """
+        Initializes training workflow components (mesh, texture, prompt embeddings, renderer, stage, config)
+        and camera/validation setup.
+    """
         self.device = config.device
         self.mesh = mesh
         self.texture = texture
@@ -61,7 +65,10 @@ class Trainer:
 
     
     def _setup_stage(self, config):
-
+        """
+            Configures stage-specific training parameters (steps, learning rate, guidance scale, model)
+            and initializes loss function.
+        """
         if self.stage == 'i':
             self.num_training_steps = config.num_steps_i
             self.lr = config.lr_i
@@ -100,6 +107,7 @@ class Trainer:
         )
 
     def _get_camera_parameters(self):
+        """Provides default camera target and radius scale for training."""
         camera_target = torch.tensor([0., 0., 0.])
         r = 2 * torch.tensor(2.2)
         self.min_radius_scale = 0.5
@@ -107,7 +115,7 @@ class Trainer:
         return camera_target, r
 
     def _setup_validation_cameras(self, config):
-
+        """Prepares validation camera positions and a separate video camera."""
         eval_renders_count = 4
         self.val_phis = torch.linspace(0, 2 * torch.pi, eval_renders_count + 1)[:-1].view(1, -1)
         self.val_thetas = torch.zeros(1, eval_renders_count)
@@ -126,7 +134,7 @@ class Trainer:
         )
 
     def _rotate_mesh(self, mesh, theta):
-        """Rotate mesh around Y-axis by theta radians."""
+        """Applies a Y-axis rotation to the mesh vertices."""
         rotation_matrix = torch.tensor([
             [theta.cos(), 0, -theta.sin()],
             [          0, 1,            0],
@@ -135,14 +143,12 @@ class Trainer:
         mesh.vertices = torch.matmul(rotation_matrix, mesh.vertices.unsqueeze(-1)).squeeze()
 
     def _compute_adaptive_timestep(self, min_step, max_step, iter_frac):
-        """
-        Compute adaptive timestep range following HiFA strategy.
-        """
+        """Computes an adaptive timestep range based on progress fraction."""
         step = max_step - (max_step - min_step) * math.sqrt(iter_frac)
         return int(step)
 
     def _clamp_textures(self):
-        """Clamp texture values to physically valid ranges."""
+        """Clamps texture values to physically valid ranges."""
         for key, clamp_range in [
             ('normals_texture', ((-0.5, 0.5,), (-0.5, 0.5), (0.5, 1.0))),
             ('diffuse_texture', ((0., 1.), (0., 1.), (0., 1.))),
@@ -156,7 +162,7 @@ class Trainer:
                     self.texture[key].data[..., d].clamp_(*clamp_range_d)
 
     def training_step(self, timestep):
-
+        """Implements single training step."""
         iter_frac = timestep / self.num_training_steps
         t_min = self._compute_adaptive_timestep(DEFAULT_T_MIN_START, DEFAULT_T_MIN_END, iter_frac)
         t_max = self._compute_adaptive_timestep(DEFAULT_T_MAX_START, DEFAULT_T_MAX_END, iter_frac)
@@ -209,8 +215,7 @@ class Trainer:
     
 
     def validation_step(self, current_step):
-        """Render validation views and save visualizations."""
-
+        """Renders validation views and saves visualization frames."""
         # Plot rendered views
         imgs = self.renderer.render(self.mesh, self.val_camera, self.light, val_background=True)   
         fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(5, 5))
@@ -244,7 +249,7 @@ class Trainer:
         plt.close()
 
     def make_video(self, current_step):
-        """Generate 360 rotation video."""
+        """Generates 360 rotation video."""
         video_path = os.path.join(
             self.progress_dir,
             f"video_stage_{self.stage}_step_{current_step}.mp4"
@@ -267,6 +272,7 @@ class Trainer:
         print(f"Video saved to {video_path}")
 
     def run_training_loop(self):
+        """Runs training loop and saves results."""
         print(f"\nTraining for {self.num_training_steps} steps...")
         
         for i in tqdm(range(self.num_training_steps), desc=f"Stage {self.stage}"):
